@@ -2,6 +2,10 @@ interface ResponseData {
   message?: string;
   token?: string;
   refreshToken?: string;
+  results?: any[];
+  page?: number;
+  limit?: number;
+  totalPages?: number;
 }
 
 class BaseResponse {

@@ -42,15 +42,15 @@ model Folder {
 }
 
 model Topic {
-    id         String      @id @default(uuid())
-    name       String      @unique
+    id         String     @id @default(uuid())
+    name       String     @unique
     data       String
-    regDate    DateTime    @default(now())
-    archived   Boolean     @default(false)
+    regDate    DateTime   @default(now())
+    archived   Boolean    @default(false)
     folderId   String
-    folder     Folder      @relation(fields: [folderId], references: [id])
-    questions  Question[]
-    flashcards Flashcard[]
+    folder     Folder     @relation(fields: [folderId], references: [id])
+    questions  Question?
+    flashcards Flashcard?
     results    Result[]
 }
 
@@ -58,7 +58,7 @@ model Question {
     id      String   @id @default(uuid())
     data    Json
     regDate DateTime @default(now())
-    topicId String
+    topicId String   @unique
     topic   Topic    @relation(fields: [topicId], references: [id])
 }
 
@@ -66,7 +66,7 @@ model Flashcard {
     id      String   @id @default(uuid())
     data    Json
     regDate DateTime @default(now())
-    topicId String
+    topicId String   @unique
     topic   Topic    @relation(fields: [topicId], references: [id])
 }
 

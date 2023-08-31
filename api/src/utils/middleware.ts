@@ -12,15 +12,18 @@ const tokenChecker = async (
 
   if (token) {
     try {
-      await jwt.verify(token, process.env.JWT_TOKEN_SECRET!);
+      var decoded = await jwt.verify(token, process.env.JWT_TOKEN_SECRET!);
+      res.locals.user_id = (<any>decoded).id;
 
       next();
     } catch (err) {
       return res.status(401).json({ message: "Unauthorized access." });
     }
+  } else {
+    return res.status(403).send({
+      message: "No token provided.",
+    });
   }
-
-  return res.status(403).send({
-    message: "No token provided.",
-  });
 };
+
+export { tokenChecker };

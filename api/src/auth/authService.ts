@@ -21,17 +21,19 @@ class AuthService {
     });
 
     if (user != undefined) {
+      console.log(process.env.JWT_REFRESH_SECRET!);
       try {
         await jwt.verify(user.refreshToken!, process.env.JWT_REFRESH_SECRET!);
 
         const tokenObj = {
+          id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
         };
 
-        const token = jwt.sign(tokenObj, process.env.JWT_SECRET!, {
-          expiresIn: process.env.JWT_SECRET_TOKEN_LIFE,
+        const token = jwt.sign(tokenObj, process.env.JWT_TOKEN_SECRET!, {
+          expiresIn: process.env.JWT_TOKEN_LIFE,
         });
 
         return new BaseResponse(200, {
@@ -54,22 +56,25 @@ class AuthService {
     });
   };
 
-  static generateJWT = async (user: User) => {
+  static generateJWT = async (user: User, txPrisma: any = null) => {
     const tokenObj = {
+      id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
     };
 
-    const token = jwt.sign(tokenObj, process.env.JWT_SECRET!, {
-      expiresIn: process.env.JWT_SECRET_TOKEN_LIFE,
+    const token = jwt.sign(tokenObj, process.env.JWT_TOKEN_SECRET!, {
+      expiresIn: process.env.JWT_TOKEN_LIFE,
     });
 
     const refreshToken = jwt.sign(tokenObj, process.env.JWT_REFRESH_SECRET!, {
       expiresIn: process.env.JWT_REFRESH_TOKEN_LIFE,
     });
 
-    await prisma.user.update({
+    let prismaClient = txPrisma ?? prisma;
+
+    await prismaClient.user.update({
       where: {
         id: user.id,
       },
@@ -88,16 +93,24 @@ class AuthService {
 
   public static defaultSignUp = async (data: SignUpRequest) => {
     try {
-      // Validate + Hash
-      let request = new SignUpVerifier(data);
+      let response = {};
 
-      await request.hashPassword();
+      await prisma.$transaction(
+        async (prisma) => {
+          let request = new SignUpVerifier(data);
 
-      const user = await prisma.user.create({
-        data: request.deserialize(),
-      });
+          await request.hashPassword();
 
-      const response = await this.generateJWT(user);
+          const user = await prisma.user.create({
+            data: request.deserialize(),
+          });
+
+          response = await this.generateJWT(user, prisma);
+        },
+        {
+          isolationLevel: Prisma.TransactionIsolationLevel.ReadUncommitted,
+        }
+      );
 
       return new BaseResponse(200, response);
     } catch (e: any) {
@@ -108,6 +121,7 @@ class AuthService {
           message = "Duplicate Email! Please sign up using another email";
           statusCode = 400;
         } else {
+          console.log(e.message);
           message = "Server Error";
           statusCode = 500;
         }
@@ -136,7 +150,7 @@ class AuthService {
         let res = await bcrypt.compare(request.password, user.password!);
 
         if (res) {
-          const response = await this.generateJWT(user);
+          const response = await this.generateJWT(user, null);
 
           return new BaseResponse(200, response);
         }

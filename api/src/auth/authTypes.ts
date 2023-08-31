@@ -15,16 +15,19 @@ class SignUpVerifier {
   password: string;
 
   constructor(data: SignUpRequest) {
-    const { firstName, lastName, email, password } = data;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.email = email;
-    this.password = password;
+    let requiredProps = ["firstName", "lastName", "email", "password"];
+
+    if (!Validator.interfaceValidator(data, requiredProps)) {
+      throw Error("Invalid payload received!");
+    }
+
+    this.firstName = data.firstName;
+    this.lastName = data.lastName;
+    this.email = data.email;
+    this.password = data.password;
 
     // Validate
-    let res = Validator.emailValidator(this.email);
-
-    if (!res) {
+    if (!Validator.emailValidator(this.email)) {
       throw Error("Invalid Email Provided!");
     }
   }
@@ -32,6 +35,15 @@ class SignUpVerifier {
   async hashPassword() {
     let salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
+  }
+
+  validate(data: SignUpRequest) {
+    return (
+      data.firstName != null &&
+      data.lastName != null &&
+      data.email != null &&
+      data.password != null
+    );
   }
 
   deserialize() {
@@ -54,10 +66,14 @@ class SignInVerifier {
   password: string;
 
   constructor(data: SignInRequest) {
-    const { email, password } = data;
+    let requiredProps = ["email", "password"];
 
-    this.email = email;
-    this.password = password;
+    if (!Validator.interfaceValidator(data, requiredProps)) {
+      throw Error("Invalid payload received!");
+    }
+
+    this.email = data.email;
+    this.password = data.password;
   }
 }
 

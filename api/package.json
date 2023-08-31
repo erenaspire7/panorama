@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "npx nodemon",
+    "dev": "npx nodemon",
     "build": "rimraf ./build && tsc",
     "test": "vitest"
   },
@@ -25,12 +25,14 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.32.0",
     "@prisma/client": "^5.1.1",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
+    "redis": "^4.6.8",
     "uuid": "^9.0.0"
   },
   "prisma": {
