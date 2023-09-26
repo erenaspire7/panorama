@@ -6,6 +6,7 @@ interface ResponseData {
   page?: number;
   limit?: number;
   totalPages?: number;
+  analogyId?: string;
 }
 
 class BaseResponse {

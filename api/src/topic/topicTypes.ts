@@ -1,7 +1,6 @@
 interface CreateTopicRequest {
-  name: string;
+  title: string;
   content: string;
-  folderId: string;
 }
 
 export { CreateTopicRequest };

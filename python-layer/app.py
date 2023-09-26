@@ -9,6 +9,7 @@ REDIS_HOST = os.environ.get("REDIS_HOST")
 REDIS_PORT = os.environ.get("REDIS_PORT")
 
 
+
 async def reader(channel):
     while True:
         message = await channel.get_message(ignore_subscribe_messages=True)

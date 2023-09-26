@@ -2,4 +2,9 @@ interface TopicCallbackRequest {
   topicId: string;
   data: string;
 }
-export { TopicCallbackRequest };
+
+interface UpdateAnalogyTitleRequest {
+  analogyId: string;
+  title: string;
+}
+export { TopicCallbackRequest, UpdateAnalogyTitleRequest };

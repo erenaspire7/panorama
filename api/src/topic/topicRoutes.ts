@@ -20,6 +20,13 @@ router.post(
   }
 );
 
+router.get(
+  "/retrieve",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let result: BaseResponse = await TopicService.retrieve(res.locals.user_id);
 
+    return res.status(result.statusCode).json(result.data);
+  }
+);
 
 export default router;

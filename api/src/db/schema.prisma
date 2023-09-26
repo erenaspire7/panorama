@@ -13,22 +13,23 @@ datasource db {
 enum QuizType {
     DEFAULT
     MATCH
-    GAP_FILL
     WRITE
 }
 
 model User {
-    id           String    @id @default(uuid())
+    id           String         @id @default(uuid())
     firstName    String
     lastName     String
-    email        String    @unique
+    email        String         @unique
     password     String?
     avatar       String?
-    regDate      DateTime  @default(now())
+    regDate      DateTime       @default(now())
     refreshToken String?
     folders      Folder[]
     analogies    Analogy[]
     otp          Otp?
+    Topic        Topic[]
+    Notification Notification[]
 }
 
 model Folder {
@@ -47,8 +48,10 @@ model Topic {
     data       String
     regDate    DateTime   @default(now())
     archived   Boolean    @default(false)
-    folderId   String
-    folder     Folder     @relation(fields: [folderId], references: [id])
+    folderId   String?
+    folder     Folder?    @relation(fields: [folderId], references: [id])
+    userId     String
+    user       User       @relation(fields: [userId], references: [id])
     questions  Question?
     flashcards Flashcard?
     results    Result[]
@@ -85,6 +88,7 @@ model Analogy {
     regDate DateTime @default(now())
     userId  String
     user    User     @relation(fields: [userId], references: [id])
+    title   String?
     chats   Chat[]
 }
 
@@ -102,5 +106,14 @@ model Otp {
     regDate DateTime @default(now())
     otp     String
     userId  String   @unique
+    user    User     @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+    id      String   @id @default(uuid())
+    regDate DateTime @default(now())
+    isRead  Boolean  @default(false)
+    text    String
+    userId  String
     user    User     @relation(fields: [userId], references: [id])
 }

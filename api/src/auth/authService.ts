@@ -1,9 +1,4 @@
-import {
-  SignInRequest,
-  SignInVerifier,
-  SignUpRequest,
-  SignUpVerifier,
-} from "./authTypes";
+import { SignInRequest, SignUpRequest, SignUpVerifier } from "./authTypes";
 import { User } from "../utils/prismaTypes";
 import BaseResponse from "../utils/response";
 import bcrypt from "bcrypt";
@@ -11,43 +6,45 @@ import jwt from "jsonwebtoken";
 import { Prisma } from "@prisma/client";
 import prisma from "../prisma";
 import "dotenv/config";
+import Validator from "../utils/validator";
 
 class AuthService {
-  public static refresh = async (refreshToken: string) => {
-    const user = await prisma.user.findFirst({
-      where: {
-        refreshToken: refreshToken,
-      },
-    });
+  public static refresh = async (refreshToken: string | undefined) => {
+    if (refreshToken != undefined) {
+      const user = await prisma.user.findFirst({
+        where: {
+          refreshToken: refreshToken,
+        },
+      });
 
-    if (user != undefined) {
-      console.log(process.env.JWT_REFRESH_SECRET!);
-      try {
-        await jwt.verify(user.refreshToken!, process.env.JWT_REFRESH_SECRET!);
+      if (user != undefined) {
+        try {
+          await jwt.verify(user.refreshToken!, process.env.JWT_REFRESH_SECRET!);
 
-        const tokenObj = {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-        };
-
-        const token = jwt.sign(tokenObj, process.env.JWT_TOKEN_SECRET!, {
-          expiresIn: process.env.JWT_TOKEN_LIFE,
-        });
-
-        return new BaseResponse(200, {
-          token: token,
-        });
-      } catch (err) {
-        await prisma.user.update({
-          where: {
+          const tokenObj = {
             id: user.id,
-          },
-          data: {
-            refreshToken: null,
-          },
-        });
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+          };
+
+          const token = jwt.sign(tokenObj, process.env.JWT_TOKEN_SECRET!, {
+            expiresIn: process.env.JWT_TOKEN_LIFE,
+          });
+
+          return new BaseResponse(200, {
+            token: token,
+          });
+        } catch (err) {
+          await prisma.user.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              refreshToken: null,
+            },
+          });
+        }
       }
     }
 
@@ -138,16 +135,20 @@ class AuthService {
 
   public static defaultSignIn = async (data: SignInRequest) => {
     try {
-      let request = new SignInVerifier(data);
+      let requiredProps = ["email", "password"];
+
+      if (!Validator.interfaceValidator(data, requiredProps)) {
+        throw Error("Invalid payload received!");
+      }
 
       let user = await prisma.user.findFirst({
         where: {
-          email: request.email,
+          email: data.email,
         },
       });
 
       if (user != null && user != undefined) {
-        let res = await bcrypt.compare(request.password, user.password!);
+        let res = await bcrypt.compare(data.password, user.password!);
 
         if (res) {
           const response = await this.generateJWT(user, null);

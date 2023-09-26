@@ -3,3 +3,4 @@ python-dotenv
 openai
 boto3
 requests
+psycopg2

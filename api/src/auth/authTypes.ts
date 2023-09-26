@@ -61,20 +61,4 @@ interface SignInRequest {
   password: string;
 }
 
-class SignInVerifier {
-  email: string;
-  password: string;
-
-  constructor(data: SignInRequest) {
-    let requiredProps = ["email", "password"];
-
-    if (!Validator.interfaceValidator(data, requiredProps)) {
-      throw Error("Invalid payload received!");
-    }
-
-    this.email = data.email;
-    this.password = data.password;
-  }
-}
-
-export { SignUpRequest, SignInRequest, SignUpVerifier, SignInVerifier };
+export { SignUpRequest, SignInRequest, SignUpVerifier };
