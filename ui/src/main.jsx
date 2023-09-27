@@ -20,6 +20,8 @@ import Notifications from "./pages/Notifications";
 import TimeAgo from "javascript-time-ago";
 
 import en from "javascript-time-ago/locale/en.json";
+import Topic from "./pages/Topic";
+import Flashcard from "./pages/Flashcard";
 
 TimeAgo.addDefaultLocale(en);
 
@@ -27,7 +29,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 async function navInterceptor({ request }) {
   let authPaths = ["/sign-in", "/sign-up"];
-  let topics, notifications;
+  let topics, notifications, flashcards;
 
   const path = new URL(request.url).pathname;
   const token = await verifyJWT();
@@ -55,7 +57,17 @@ async function navInterceptor({ request }) {
     notifications = response.data["results"];
   }
 
-  return { isAuthenticated, topics, notifications };
+  if (isAuthenticated && path.includes("flashcards")) {
+    const topicId = path.split("/")[2];
+
+    let response = await axiosInstance.post("topic/flashcards", {
+      topicId: topicId,
+    });
+
+    flashcards = response.data["results"];
+  }
+
+  return { isAuthenticated, topics, notifications, flashcards };
 }
 
 const router = createBrowserRouter([
@@ -87,6 +99,16 @@ const router = createBrowserRouter([
   {
     path: "/notifications",
     element: <Notifications />,
+    loader: navInterceptor,
+  },
+  {
+    path: "/topic/:topicId",
+    element: <Topic />,
+    loader: navInterceptor,
+  },
+  {
+    path: "/topic/:topicId/flashcards",
+    element: <Flashcard />,
     loader: navInterceptor,
   },
 ]);

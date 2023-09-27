@@ -29,4 +29,17 @@ router.get(
   }
 );
 
+router.post(
+  "/flashcards",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+    let result: BaseResponse = await TopicService.getFlashcards(
+      data,
+      res.locals.user_id
+    );
+
+    return res.status(result.statusCode).json(result.data);
+  }
+);
+
 export default router;

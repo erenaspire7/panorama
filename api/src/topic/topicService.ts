@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import BaseResponse from "../utils/response";
-import { CreateTopicRequest } from "./topicTypes";
+import { CreateTopicRequest, RetrieveFlashcardsRequest } from "./topicTypes";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
 import prisma from "../prisma";
@@ -96,6 +96,50 @@ class TopicService {
 
       return new BaseResponse(200, {
         results: topics,
+      });
+    } catch (err: any) {
+      let message, statusCode;
+
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        message = "Server Error";
+        statusCode = 500;
+      } else {
+        message = err.message;
+        statusCode = 400;
+      }
+
+      return new BaseResponse(statusCode, {
+        message: message,
+      });
+    }
+  };
+
+  public static getFlashcards = async (
+    data: RetrieveFlashcardsRequest,
+    user_id: string
+  ) => {
+    try {
+      const requiredProps = ["topicId"];
+
+      if (!Validator.interfaceValidator(data, requiredProps)) {
+        throw Error("Invalid payload received!");
+      }
+
+      let topics = await prisma.topic.findFirstOrThrow({
+        where: {
+          userId: user_id,
+          id: data.topicId,
+        },
+      });
+
+      let flashcard = await prisma.flashcard.findFirstOrThrow({
+        where: {
+          topicId: data.topicId,
+        },
+      });
+
+      return new BaseResponse(200, {
+        results: flashcard.data as Prisma.JsonArray,
       });
     } catch (err: any) {
       let message, statusCode;

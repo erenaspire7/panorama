@@ -3,4 +3,8 @@ interface CreateTopicRequest {
   content: string;
 }
 
-export { CreateTopicRequest };
+interface RetrieveFlashcardsRequest {
+  topicId: string;
+}
+
+export { CreateTopicRequest, RetrieveFlashcardsRequest };
