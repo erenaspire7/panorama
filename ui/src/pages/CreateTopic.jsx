@@ -12,7 +12,7 @@ export default function CreateTopic() {
     formState: { errors },
   } = useForm();
 
-  const navigate = useNavigate();
+const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
@@ -32,7 +32,6 @@ export default function CreateTopic() {
         });
       }
     }
-    console.log(data);
   };
 
   return (

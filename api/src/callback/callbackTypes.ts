@@ -7,4 +7,9 @@ interface UpdateAnalogyTitleRequest {
   analogyId: string;
   title: string;
 }
-export { TopicCallbackRequest, UpdateAnalogyTitleRequest };
+
+interface UpdateResultRequest {
+  resultId: string;
+  score: any;
+}
+export { TopicCallbackRequest, UpdateAnalogyTitleRequest, UpdateResultRequest };

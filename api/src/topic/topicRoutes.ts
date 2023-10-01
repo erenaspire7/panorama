@@ -42,4 +42,32 @@ router.post(
   }
 );
 
+router.post(
+  "/questions",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+
+    let result: BaseResponse = await TopicService.getQuestions(
+      data,
+      res.locals.user_id
+    );
+
+    return res.status(result.statusCode).json(result.data);
+  }
+);
+
+router.post(
+  "/save-write-quiz",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+
+    let result: BaseResponse = await TopicService.saveWriteQuiz(
+      data,
+      res.locals.user_id
+    );
+
+    return res.status(result.statusCode).json(result.data);
+  }
+);
+
 export default router;

@@ -22,6 +22,9 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 import Topic from "./pages/Topic";
 import Flashcard from "./pages/Flashcard";
+import MatchMode from "./pages/MatchMode";
+import { shuffle } from "./utils/helper";
+import WriteMode from "./pages/WriteMode";
 
 TimeAgo.addDefaultLocale(en);
 
@@ -29,7 +32,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 async function navInterceptor({ request }) {
   let authPaths = ["/sign-in", "/sign-up"];
-  let topics, notifications, flashcards;
+  let topics, notifications, flashcards, terms, definitions, questions;
 
   const path = new URL(request.url).pathname;
   const token = await verifyJWT();
@@ -57,7 +60,10 @@ async function navInterceptor({ request }) {
     notifications = response.data["results"];
   }
 
-  if (isAuthenticated && path.includes("flashcards")) {
+  if (
+    isAuthenticated &&
+    (path.includes("flashcards") || path.includes("match-mode"))
+  ) {
     const topicId = path.split("/")[2];
 
     let response = await axiosInstance.post("topic/flashcards", {
@@ -65,9 +71,34 @@ async function navInterceptor({ request }) {
     });
 
     flashcards = response.data["results"];
+
+    terms = flashcards.map((el) => el["term"]);
+    definitions = flashcards.map((el) => el["definition"]);
+
+    shuffle(terms);
+    shuffle(definitions);
   }
 
-  return { isAuthenticated, topics, notifications, flashcards };
+  if (isAuthenticated && path.includes("write")) {
+    const topicId = path.split("/")[2];
+
+    let response = await axiosInstance.post("topic/questions", {
+      topicId: topicId,
+      mode: "write",
+    });
+
+    questions = response.data["results"];
+  }
+
+  return {
+    isAuthenticated,
+    topics,
+    notifications,
+    flashcards,
+    terms,
+    definitions,
+    questions,
+  };
 }
 
 const router = createBrowserRouter([
@@ -109,6 +140,16 @@ const router = createBrowserRouter([
   {
     path: "/topic/:topicId/flashcards",
     element: <Flashcard />,
+    loader: navInterceptor,
+  },
+  {
+    path: "/topic/:topicId/match",
+    element: <MatchMode />,
+    loader: navInterceptor,
+  },
+  {
+    path: "/topic/:topicId/write",
+    element: <WriteMode />,
     loader: navInterceptor,
   },
 ]);

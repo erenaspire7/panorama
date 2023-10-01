@@ -56,6 +56,9 @@ def process_message(message):
                 case "title_generation":
                     title_generation(message, task["callbackUrl"])
 
+                case "written_quiz_analysis":
+                    written_quiz_analysis(message, task["callbackUrl"], content)
+
                 case _:
                     pass
 
@@ -189,4 +192,32 @@ def title_generation(message, callback_url):
 
     data = response["choices"][0]["message"]["content"]
     body = {"title": data, "analogyId": message["analogyId"]}
+    requests.post(callback_url, json=body)
+
+
+def written_quiz_analysis(message, callback_url, content):
+    default_prompt = "I want you to act as a grade bot. I will provide a json array, which has json objects with question, answer and userAnswer. Your job is to provide a score, as well as additional comments to aid in understanding what must be done better."
+
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo-16k",
+        messages=[
+            {"role": "system", "content": default_prompt},
+            {
+                "role": "assistant",
+                "content": '[{"question": "What is the Socratic method?", "answer": "The Socratic method is a form of dialectical inquiry where Socrates asked probing questions to stimulate critical thinking and encourage others to examine their own beliefs and knowledge.", "userAnswer": "The socratic method is a method where questions are utilized to encourage thinking", "score": 8, "comment": "While it accurately conveys the main concept of the Socratic method, it could be slightly more detailed to fully capture its philosophical and dialectical nature."}]',
+            },
+            {"role": "user", "content": content},
+        ],
+    )
+
+    data = response["choices"][0]["message"]["content"]
+
+    s3_client.put_object(Bucket="panorama-user-content", Key=message["data"], Body=data)
+
+    arr = json.loads(data)
+
+    score = sum(el["score"] for el in arr) / len(arr)
+
+    body = {"score": round(score, 2), "resultId": message["resultId"]}
+
     requests.post(callback_url, json=body)

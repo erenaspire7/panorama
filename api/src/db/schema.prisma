@@ -77,7 +77,7 @@ model Result {
     id       String   @id @default(uuid())
     quizType QuizType
     data     String
-    score    Float
+    score    Float?
     regDate  DateTime @default(now())
     topicId  String
     topic    Topic    @relation(fields: [topicId], references: [id])

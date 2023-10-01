@@ -15,7 +15,7 @@ export default function Dashboard() {
         <div className="pt-12 px-20 w-full">
           <h1 className="font-bold text-3xl">Topics.</h1>
 
-          <div class="grid grid-cols-3 gap-4 pt-4">
+          <div className="grid grid-cols-3 gap-4 pt-4">
             {topics.map((el) => (
               <motion.button
                 whileHover={{ scale: 1.05 }}

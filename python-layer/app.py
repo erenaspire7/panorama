@@ -7,7 +7,7 @@ load_dotenv()
 
 REDIS_HOST = os.environ.get("REDIS_HOST")
 REDIS_PORT = os.environ.get("REDIS_PORT")
-
+REDIS_PASS = os.environ.get("REDIS_PASS")
 
 
 async def reader(channel):
@@ -19,7 +19,9 @@ async def reader(channel):
 
 
 async def main():
-    redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
+    redis_client = redis.Redis(
+        host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASS
+    )
 
     async with redis_client.pubsub() as pubsub:
         await pubsub.subscribe("task_channel")

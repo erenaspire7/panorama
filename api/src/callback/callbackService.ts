@@ -5,6 +5,7 @@ import BaseResponse from "../utils/response";
 import {
   TopicCallbackRequest,
   UpdateAnalogyTitleRequest,
+  UpdateResultRequest,
 } from "./callbackTypes";
 import NotificationService from "../notification/notificationService";
 
@@ -102,6 +103,41 @@ class CallbackService {
         },
         data: {
           title: request.title,
+        },
+      });
+
+      return new BaseResponse(200, {});
+    } catch (err: any) {
+      let message, statusCode;
+
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        message = "Server Error";
+        statusCode = 500;
+      } else {
+        message = err.message;
+        statusCode = 400;
+      }
+
+      return new BaseResponse(statusCode, {
+        message: message,
+      });
+    }
+  };
+
+  public static updateResult = async (request: UpdateResultRequest) => {
+    try {
+      const requiredProps = ["resultId", "score"];
+
+      if (!Validator.interfaceValidator(request, requiredProps)) {
+        throw Error("Invalid payload received!");
+      }
+
+      await prisma.result.update({
+        where: {
+          id: request.resultId,
+        },
+        data: {
+          score: request.score,
         },
       });
 

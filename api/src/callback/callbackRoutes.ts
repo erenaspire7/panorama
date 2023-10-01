@@ -57,4 +57,15 @@ router.post(
   }
 );
 
+router.post(
+  "/update-result",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+
+    let result: BaseResponse = await CallbackService.updateResult(data);
+
+    return res.status(result.statusCode).json(result.data);
+  }
+);
+
 export default router;

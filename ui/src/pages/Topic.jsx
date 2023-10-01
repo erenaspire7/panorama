@@ -9,8 +9,6 @@ export default function Topic() {
 
   const id = path.pathname.split("/")[2];
 
-  console.log(id);
-
   return (
     <Layout>
       <div className="pt-12 px-20 w-3/4 mx-auto">
@@ -26,7 +24,10 @@ export default function Topic() {
               className={` bg-black w-full h-full absolute top-1 left-1 z-0`}
             ></div>
           </div>
-          <div className="h-64 relative cursor-pointer">
+          <div
+            className="h-64 relative cursor-pointer"
+            onClick={() => navigate(`/topic/${id}/write`)}
+          >
             <div className="h-full bg-white border-2 border-black p-4 relative z-50 hover:text-white hover:bg-emerald-500">
               <EllipsisHorizontalIcon className="h-6 w-6" />
               <p className="text-lg">Write-Mode</p>
@@ -35,8 +36,11 @@ export default function Topic() {
               className={` bg-black w-full h-full absolute top-1 left-1 z-0`}
             ></div>
           </div>
-          <div className="h-64 relative cursor-pointer">
-            <div class="h-full bg-white border-2 border-black p-4 relative z-50 hover:text-white hover:bg-emerald-500">
+          <div
+            className="h-64 relative cursor-pointer"
+            onClick={() => navigate(`/topic/${id}/match`)}
+          >
+            <div className="h-full bg-white border-2 border-black p-4 relative z-50 hover:text-white hover:bg-emerald-500">
               <EllipsisHorizontalIcon className="h-6 w-6" />
               <p className="text-lg">Match-Mode</p>
             </div>
@@ -48,7 +52,7 @@ export default function Topic() {
             className="h-64 relative cursor-pointer"
             onClick={() => navigate(`/topic/${id}/flashcards`)}
           >
-            <div class="h-full bg-white border-2 border-black p-4 relative z-50 hover:text-white hover:bg-emerald-500">
+            <div className="h-full bg-white border-2 border-black p-4 relative z-50 hover:text-white hover:bg-emerald-500">
               <EllipsisHorizontalIcon className="h-6 w-6" />
               <p className="text-lg">Flashcards</p>
             </div>
