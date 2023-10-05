@@ -5,34 +5,39 @@ import {
   createBrowserRouter,
   redirect,
 } from "react-router-dom";
-
-import Home from "./pages/Home";
-import Login from "./pages/Login";
+import en from "javascript-time-ago/locale/en.json";
+import TimeAgo from "javascript-time-ago";
+// import { requestPermission } from "./../public/firebase-messaging-sw";
 
 import "./index.css";
 import verifyJWT from "./utils/verifyJWT";
+import axiosInstance from "./utils/axios";
+import { shuffle } from "./utils/helper";
+import { requestPermission } from "./utils/firebase";
+
 import Analogy from "./pages/Analogy";
 import SignUp from "./pages/SignUp";
 import CreateTopic from "./pages/CreateTopic";
-import axiosInstance from "./utils/axios";
 import Notifications from "./pages/Notifications";
-
-import TimeAgo from "javascript-time-ago";
-
-import en from "javascript-time-ago/locale/en.json";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
 import Topic from "./pages/Topic";
 import Flashcard from "./pages/Flashcard";
 import MatchMode from "./pages/MatchMode";
-import { shuffle } from "./utils/helper";
 import WriteMode from "./pages/WriteMode";
 
 TimeAgo.addDefaultLocale(en);
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 async function navInterceptor({ request }) {
   let authPaths = ["/sign-in", "/sign-up"];
-  let topics, notifications, flashcards, terms, definitions, questions;
+  let topics,
+    notifications,
+    flashcards,
+    terms,
+    definitions,
+    questions,
+    analogyHistory;
 
   const path = new URL(request.url).pathname;
   const token = await verifyJWT();
@@ -50,6 +55,8 @@ async function navInterceptor({ request }) {
   }
 
   if (path == "/" && isAuthenticated) {
+    requestPermission();
+
     let response = await axiosInstance.get("topic/retrieve");
 
     topics = response.data["results"];
@@ -60,9 +67,14 @@ async function navInterceptor({ request }) {
     notifications = response.data["results"];
   }
 
+  if (isAuthenticated && path.includes("analogy-bot")) {
+    let response = await axiosInstance.post("analogy/history");
+    analogyHistory = response.data;
+  }
+
   if (
     isAuthenticated &&
-    (path.includes("flashcards") || path.includes("match-mode"))
+    (path.includes("flashcards") || path.includes("match"))
   ) {
     const topicId = path.split("/")[2];
 
@@ -98,6 +110,7 @@ async function navInterceptor({ request }) {
     terms,
     definitions,
     questions,
+    analogyHistory,
   };
 }
 

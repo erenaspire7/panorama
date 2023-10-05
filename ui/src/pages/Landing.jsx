@@ -8,12 +8,12 @@ export default function Landing() {
 
   return (
     <Layout>
-      <div className="bg-center bg-cover p-20 w-full flex flex-col items-start justify-center">
+      <div className="bg-center bg-cover p-8 lg:p-20 w-full flex flex-col items-start justify-center">
         <div className="">
-          <p className="font-bold text-5xl">Explore, Enrich, Empower.</p>
+          <p className="font-bold text-3xl lg:text-5xl">Explore, Enrich, Empower.</p>
         </div>
-        <div className="max-w-xl py-6">
-          <p className="">
+        <div className="max-w-xl pt-2 pb-4 lg:py-6">
+          <p className="text-sm lg:text-md">
             Our e-learning platform redefines education. Join a community of
             learners worldwide who are leveraging our innovative resources,
             AI-driven features, and expert support to transform their learning

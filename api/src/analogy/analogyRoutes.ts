@@ -34,4 +34,16 @@ router.post(
     return res.status(result.statusCode).json(result.data);
   }
 );
+
+router.post(
+  "/history",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let result: BaseResponse = await AnalogyService.history(
+      req.query,
+      res.locals.user_id
+    );
+
+    return res.status(result.statusCode).json(result.data);
+  }
+);
 export default router;

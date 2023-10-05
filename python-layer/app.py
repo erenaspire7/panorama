@@ -32,4 +32,5 @@ async def main():
 
 
 if __name__ == "__main__":
+    print("Layer running")
     asyncio.run(main())

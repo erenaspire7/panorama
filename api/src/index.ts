@@ -9,11 +9,18 @@ import { setup } from "./redis";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
+import { initializeApp } from "firebase-admin/app";
+import * as admin from "firebase-admin";
+import serviceAccount from "./google-service-account.json";
+
+initializeApp({
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+});
 
 const app = express();
 const port = 4000;
 
-const accessOrigins = ["http://localhost:5173"];
+const accessOrigins = ["http://localhost:5173", "http://ui"];
 
 (async () => {
   await setup();

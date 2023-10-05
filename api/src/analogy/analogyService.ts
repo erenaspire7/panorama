@@ -17,7 +17,7 @@ class AnalogyService {
       let analogy;
 
       // Check If Analogy Exists
-      if (data.analogyId != undefined || data.analogyId != null) {
+      if (data.analogyId != undefined && data.analogyId != null) {
         analogy = await prisma.analogy.findFirstOrThrow({
           where: {
             id: data.analogyId,
@@ -36,7 +36,7 @@ class AnalogyService {
           tasks: [
             {
               taskType: "title_generation",
-              callbackUrl: "http://localhost:4000/api/callback/analogy-title",
+              callbackUrl: `${process.env.API_URL}/api/callback/analogy-title`,
             },
           ],
           analogyId: analogy.id,
@@ -58,7 +58,7 @@ class AnalogyService {
         tasks: [
           {
             taskType: "analogy_generation",
-            callbackUrl: "http://localhost:4000/api/callback/emit-analogy",
+            callbackUrl: `${process.env.API_URL}/api/callback/emit-analogy`,
           },
         ],
         analogyId: analogy.id,
@@ -117,6 +117,55 @@ class AnalogyService {
       return new BaseResponse(200, {
         results: chats,
       });
+    } catch (err: any) {
+      let message, statusCode;
+
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        message = "Server Error";
+        statusCode = 500;
+      } else {
+        message = err.message;
+        statusCode = 400;
+      }
+
+      return new BaseResponse(statusCode, {
+        message: message,
+      });
+    }
+  };
+
+  public static history = async (query_params: any, user_id: string) => {
+    try {
+      let page = query_params.page ?? 1;
+      let limit = query_params.limit ?? 5;
+
+      page = parseInt(page);
+      limit = parseInt(limit);
+
+      let total = await prisma.analogy.count({
+        where: {
+          userId: user_id,
+        },
+      });
+
+      let totalPages = Math.ceil(total / limit);
+
+      let analogies = await prisma.analogy.findMany({
+        where: {
+          userId: user_id,
+        },
+        take: limit,
+        skip: (page - 1) * limit,
+      });
+
+      let data = {
+        results: analogies,
+        page: page,
+        limit: limit,
+        totalPages: totalPages,
+      };
+
+      return new BaseResponse(200, data);
     } catch (err: any) {
       let message, statusCode;
 

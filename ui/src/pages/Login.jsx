@@ -14,32 +14,33 @@ export default function Login() {
   } = useForm();
   const navigate = useNavigate();
 
-  const onSubmit = async (data) => {
-    try {
-      let response = await axiosInstance.post("auth/sign-in", data);
+  const onSubmit = (data) => {
+    axiosInstance
+      .post("auth/sign-in", data)
+      .then((response) => {
+        sessionStorage.setItem("panorama-access-token", response.data["token"]);
 
-      sessionStorage.setItem("panorama-access-token", response.data["token"]);
-
-      toast.success("Login Successful!", {
-        theme: "colored",
-        className: "text-sm",
-      });
-
-      navigate("/");
-    } catch (err) {
-      if (err.response != undefined) {
-        toast.error(err.response.data["message"], {
+        toast.success("Login Successful!", {
           theme: "colored",
           className: "text-sm",
         });
-      }
-    }
+
+        navigate("/");
+      })
+      .catch((err) => {
+        if (err.response != undefined) {
+          toast.error(err.response.data["message"], {
+            theme: "colored",
+            className: "text-sm",
+          });
+        }
+      });
   };
 
   return (
     <Layout>
-      <div className="w-1/2 justify-center flex pt-20">
-        <div className="w-1/2">
+      <div className="w-full lg:w-1/2 justify-center flex pt-16 lg:pt-20">
+        <div className="w-3/4 lg:w-1/2">
           <h1 className="font-bold text-3xl">Sign In.</h1>
 
           <div className="my-8 space-y-4">
@@ -110,12 +111,12 @@ export default function Login() {
           <div className="flex justify-end">
             <Button
               text={"Log In"}
-              onClick={handleSubmit(async (data) => await onSubmit(data))}
+              onClick={handleSubmit((data) => onSubmit(data))}
             />
           </div>
         </div>
       </div>
-      <div className="w-1/2 bg-emerald-800"></div>
+      <div className="hidden lg:block w-1/2 bg-emerald-800"></div>
       <ToastContainer />
     </Layout>
   );

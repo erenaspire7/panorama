@@ -14,12 +14,32 @@ export default function SignUp() {
   } = useForm();
   const navigate = useNavigate();
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
+    let response = await axiosInstance.post("auth/sign-up", data);
+
+    sessionStorage.setItem("panorama-access-token", response.data["token"]);
+
+    toast.success("Registration Successful!", {
+      theme: "colored",
+      className: "text-sm",
+    });
+
+    navigate("/");
+    try {
+    } catch (err) {
+      if (err.response != undefined) {
+        toast.error(err.response.data["message"], {
+          theme: "colored",
+          className: "text-sm",
+        });
+      }
+    }
+  };
 
   return (
     <Layout>
-      <div className="w-1/2 justify-center flex pt-20">
-        <div className="w-1/2">
+      <div className="w-full lg:w-1/2 justify-center flex pt-16 lg:pt-20">
+        <div className="w-3/4 lg:w-1/2">
           <h1 className="font-bold text-3xl">Register.</h1>
 
           <div className="my-8 space-y-4">
@@ -50,7 +70,7 @@ export default function SignUp() {
                   </div>
                   {errors.firstName ? (
                     <div className="text-xs p-1 text-red-500">
-                    <p>Please provide your first name!</p>
+                      <p>Please provide your first name!</p>
                     </div>
                   ) : (
                     ""
@@ -164,7 +184,7 @@ export default function SignUp() {
           </div>
         </div>
       </div>
-      <div className="w-1/2 bg-emerald-800"></div>
+      <div className="hidden lg:block w-1/2 bg-emerald-800"></div>
       <ToastContainer />
     </Layout>
   );

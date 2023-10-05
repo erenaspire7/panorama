@@ -30,6 +30,7 @@ model User {
     otp          Otp?
     Topic        Topic[]
     Notification Notification[]
+    Devices      Devices[]
 }
 
 model Folder {
@@ -116,4 +117,12 @@ model Notification {
     text    String
     userId  String
     user    User     @relation(fields: [userId], references: [id])
+}
+
+model Devices {
+    id                String   @id @default(uuid())
+    notificationToken String?
+    regDate           DateTime @default(now())
+    userId            String
+    user              User     @relation(fields: [userId], references: [id])
 }

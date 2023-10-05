@@ -59,11 +59,11 @@ class TopicService {
         tasks: [
           {
             taskType: "question_generation",
-            callbackUrl: "http://localhost:4000/api/callback/create-question",
+            callbackUrl: `${process.env.API_URL}/api/callback/create-question`,
           },
           {
             taskType: "flashcard_generation",
-            callbackUrl: "http://localhost:4000/api/callback/create-flashcard",
+            callbackUrl: `${process.env.API_URL}/api/callback/create-flashcard`,
           },
         ],
         data: key,
@@ -260,7 +260,7 @@ class TopicService {
         tasks: [
           {
             taskType: "written_quiz_analysis",
-            callbackUrl: "http://localhost:4000/api/callback/update-result",
+            callbackUrl: `${process.env.API_URL}/api/callback/update-result`,
           },
         ],
         data: key,

@@ -1,13 +1,19 @@
-import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import {
+  PaperAirplaneIcon,
+  ChatBubbleBottomCenterIcon,
+} from "@heroicons/react/24/outline";
 import Button from "../components/Button";
 import Layout from "../components/Layout";
 import { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import axiosInstance from "../utils/axios";
+import { useLoaderData } from "react-router-dom";
 
 export default function Analogy() {
-  const analogyId = useRef(null);
+  const { analogyHistory } = useLoaderData();
 
+  const [history, setHistory] = useState(analogyHistory["results"]);
+  const analogyId = useRef(null);
   const messageStore = useRef([]);
   const [messages, setMessages] = useState([]);
   const [busy, setBusy] = useState(false);
@@ -43,7 +49,7 @@ export default function Analogy() {
           analogyId: id,
         });
 
-        // setMessages(response.data["results"]);
+        setMessages(response.data["results"]);
       } catch (err) {
         // Log
       }
@@ -78,24 +84,49 @@ export default function Analogy() {
     }
   };
 
+  const changeChatContext = async (id) => {
+    analogyId.current = id;
+
+    await retrieveMessages();
+  };
+
+  const newChat = () => {
+    analogyId.current = null;
+    setMessages([]);
+  };
+
   return (
     <Layout>
       <div
         className="w-full flex"
         style={{
-          maxHeight: "calc(100vh - 72px)",
+          maxHeight: "calc(100vh - 68px)",
         }}
       >
-        <div className="w-1/6 bg-emerald-800 flex flex-col p-2">
+        <div className="hidden lg:block lg:w-1/6 bg-emerald-800 flex flex-col p-2">
           <div className="flex justify-center">
-            <div className="w-full">
+            <div className="">
               <Button
                 text={"New Chat"}
                 onClick={() => {
-                  alert("Not Implemented!");
+                  newChat();
                 }}
               />
             </div>
+          </div>
+          <div className="mt-4 space-y-2">
+            {history.map((el, index) => (
+              <div
+                key={el["id"]}
+                className="p-3 bg-white text-sm flex items-center space-x-2 cursor-pointer"
+                onClick={async () => await changeChatContext(el["id"])}
+              >
+                <span>
+                  <ChatBubbleBottomCenterIcon className="h-4 w-4" />
+                </span>
+                <span>{el["title"] ?? `Chat ${index + 1}`} </span>
+              </div>
+            ))}
           </div>
         </div>
         <div className="w-5/6 max-h-full flex flex-col justify-between">

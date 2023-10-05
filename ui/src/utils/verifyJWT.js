@@ -23,7 +23,7 @@ const verifyJWT = async () => {
   let token = sessionStorage.getItem("panorama-access-token");
   let newToken = null;
 
-  if (token != null) {
+  if (token != null && token != undefined) {
     try {
       var decoded = jwt_decode(token);
 

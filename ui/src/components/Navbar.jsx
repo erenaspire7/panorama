@@ -50,7 +50,7 @@ export default function Navbar() {
     <div
       className={`${
         isLanding ? "fixed" : "sticky "
-      } bg-white flex w-full items-center justify-between py-4 px-16 shadow-md top-0`}
+      } bg-white flex w-full items-center justify-between py-4 px-8 lg:px-16 shadow-md top-0`}
       style={{
         zIndex: 1100,
       }}
@@ -63,15 +63,25 @@ export default function Navbar() {
       </h1>
 
       {!isAuthenticated ? (
-        <div className="flex space-x-8 text-xs">
-          <button className="" onClick={() => navigate("/sign-in")}>
+        <div className="flex space-x-4 lg:space-x-8 text-xs">
+          <button
+            className={`${
+              ["/sign-in", "/sign-up"].includes(path.pathname) ? "hidden" : ""
+            }`}
+            onClick={() => navigate("/sign-in")}
+          >
             Log In
           </button>
+
           <Button
             icon={<ArrowRightIcon className="h-3 w-3" />}
-            text="Join Now"
+            text={`${path.pathname == "/sign-up" ? "Sign In" : "Join Now"} `}
             textSize="text-xs"
-            onClick={() => navigate("/sign-up")}
+            onClick={() => {
+              path.pathname == "/sign-up"
+                ? navigate("/sign-in")
+                : navigate("/sign-up");
+            }}
           ></Button>
         </div>
       ) : (

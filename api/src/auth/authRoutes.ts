@@ -17,6 +17,7 @@ router.post(
 
     return res.status(result.statusCode).json({
       token: result.data.token,
+      message: result.data.message,
     });
   }
 );
@@ -35,6 +36,7 @@ router.post(
 
     return res.status(result.statusCode).json({
       token: result.data.token,
+      message: result.data.message,
     });
   }
 );

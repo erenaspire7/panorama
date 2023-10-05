@@ -60,6 +60,18 @@ export default function Topic() {
               className={` bg-black w-full h-full absolute top-1 left-1 z-0`}
             ></div>
           </div>
+          <div
+            className="h-64 relative cursor-pointer"
+            onClick={() => navigate(`/topic/${id}/flashcards`)}
+          >
+            <div className="h-full bg-white border-2 border-black p-4 relative z-50 hover:text-white hover:bg-emerald-500">
+              <EllipsisHorizontalIcon className="h-6 w-6" />
+              <p className="text-lg">Edit Content</p>
+            </div>
+            <div
+              className={` bg-black w-full h-full absolute top-1 left-1 z-0`}
+            ></div>
+          </div>
         </div>
       </div>
     </Layout>

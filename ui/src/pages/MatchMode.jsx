@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function MatchMode() {
   const { terms, definitions, flashcards } = useLoaderData();
 
+
   const [chosenTerm, setChosenTerm] = useState(null);
   const [chosenDefinition, setChosenDefinition] = useState(null);
 
@@ -61,7 +62,7 @@ export default function MatchMode() {
     }
   }, [chosenTerm, chosenDefinition]);
 
-return (
+  return (
     <Layout>
       <div className="w-full py-10 px-20 flex">
         <div className="w-1/3 text-center mr-4">
