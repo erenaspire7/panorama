@@ -25,6 +25,7 @@ import Topic from "./pages/Topic";
 import Flashcard from "./pages/Flashcard";
 import MatchMode from "./pages/MatchMode";
 import WriteMode from "./pages/WriteMode";
+import Quiz from "./pages/Quiz";
 
 TimeAgo.addDefaultLocale(en);
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -165,6 +166,11 @@ const router = createBrowserRouter([
     element: <WriteMode />,
     loader: navInterceptor,
   },
+  {
+    path: "/topic/:topicId/quiz",
+    element: <Quiz />,
+    loader: navInterceptor,
+  }
 ]);
 
 root.render(
