@@ -67,7 +67,7 @@ async function navInterceptor({ request }) {
     flashcards = response.data["results"];
   }
 
-  return { isAuthenticated, topics, notifications, flashcards };
+  return { isAuthenticated, topics, notifications, flashcards, questions };
 }
 
 const router = createBrowserRouter([
@@ -108,7 +108,12 @@ const router = createBrowserRouter([
   },
   {
     path: "/topic/:topicId/flashcards",
-    element: <Flashcard />,
+    element: <Flashcard/>,
+    loader: navInterceptor,
+  },
+  {
+    path: "/topic/:topicId/quiz",
+    element: <Quiz/>,
     loader: navInterceptor,
   },
 ]);
