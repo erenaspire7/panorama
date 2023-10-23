@@ -25,6 +25,7 @@ import Topic from "./pages/Topic";
 import Flashcard from "./pages/Flashcard";
 import MatchMode from "./pages/MatchMode";
 import WriteMode from "./pages/WriteMode";
+import Quiz from "./pages/Quiz";
 
 TimeAgo.addDefaultLocale(en);
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -101,9 +102,21 @@ async function navInterceptor({ request }) {
 
     questions = response.data["results"];
   }
+  if (isAuthenticated && path.includes("quiz")) {
+    const topicId = path.split("/")[2];
+
+    let response = await axiosInstance.post("topic/questions", {
+      topicId: topicId,
+      mode: "quiz",
+    });
+
+    questions = response.data["results"];
+    
+  }
+  
 
   return {
-    isAuthenticated,
+    isAuthenticated, 
     topics,
     notifications,
     flashcards,
@@ -165,6 +178,11 @@ const router = createBrowserRouter([
     element: <WriteMode />,
     loader: navInterceptor,
   },
+  {
+    path: "/topic/:topicId/quiz",
+    element: <Quiz />,
+    loader: navInterceptor,
+  }
 ]);
 
 root.render(
