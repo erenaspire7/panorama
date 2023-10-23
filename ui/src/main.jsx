@@ -102,9 +102,21 @@ async function navInterceptor({ request }) {
 
     questions = response.data["results"];
   }
+  if (isAuthenticated && path.includes("quiz")) {
+    const topicId = path.split("/")[2];
+
+    let response = await axiosInstance.post("topic/questions", {
+      topicId: topicId,
+      mode: "quiz",
+    });
+
+    questions = response.data["results"];
+    
+  }
+  
 
   return {
-    isAuthenticated,
+    isAuthenticated, 
     topics,
     notifications,
     flashcards,
