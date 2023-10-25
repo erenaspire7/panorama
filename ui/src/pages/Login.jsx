@@ -1,8 +1,7 @@
 import Button from "../components/Button";
 import Layout from "../components/Layout";
 import { useForm } from "react-hook-form";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import axiosInstance from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 
@@ -117,7 +116,6 @@ export default function Login() {
         </div>
       </div>
       <div className="hidden lg:block w-1/2 bg-emerald-800"></div>
-      <ToastContainer />
     </Layout>
   );
 }

@@ -26,6 +26,9 @@ s3_client = s3_client = boto3.client(
     region_name="eu-west-1",
 )
 
+google_api_key = os.environ.get("GOOGLE_API_KEY")
+google_cse_id = os.environ.get("GOOGLE_CSE_ID")
+
 
 def process_message(message):
     message = json.loads(message)
@@ -58,6 +61,11 @@ def process_message(message):
 
                 case "written_quiz_analysis":
                     written_quiz_analysis(message, task["callbackUrl"], content)
+
+                case "additional_resource_generation":
+                    generate_additional_reading_resources(
+                        message["topicId"], content, task["callbackUrl"]
+                    )
 
                 case _:
                     pass
@@ -121,7 +129,7 @@ def flashcard_generation(content, callback_url, topic_id):
     default_prompt = "I want you to act as a flashcards generator. You will generate a JSON array of diverse terms and their corresponding answers based on the provided block of text. The text may require cleaning for better comprehension. Ensure to include terms that ask for explanations of concepts, definitions and discussions around ideas."
 
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
+        model="gpt-4",
         messages=[
             {"role": "system", "content": default_prompt},
             {
@@ -199,7 +207,7 @@ def written_quiz_analysis(message, callback_url, content):
     default_prompt = "I want you to act as a grade bot. I will provide a json array, which has json objects with question, answer and userAnswer. Your job is to provide a score, as well as additional comments to aid in understanding what must be done better."
 
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
+        model="gpt-4",
         messages=[
             {"role": "system", "content": default_prompt},
             {
@@ -220,4 +228,36 @@ def written_quiz_analysis(message, callback_url, content):
 
     body = {"score": round(score, 2), "resultId": message["resultId"]}
 
+    requests.post(callback_url, json=body)
+
+
+def generate_additional_reading_resources(topicId, content, callback_url):
+    default_prompt = "I want you as a google query generator. I'll provide content, which you should extract a key search sentence, which I can pass on google to retrieve additional links. You don't have to put quotes as I just want the sentence."
+
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": default_prompt},
+            {
+                "role": "assistant",
+                "content": "Socrates philosophical method and legacy",
+            },
+            {
+                "role": "user",
+                "content": content,
+            },
+        ],
+    )
+
+    query = response["choices"][0]["message"]["content"]
+
+    results = requests.get(
+        f"https://www.googleapis.com/customsearch/v1?key={google_api_key}&cx={google_cse_id}&q={query}"
+    )
+
+    top_links = results.json()["items"][:5]
+
+    body = {"links": top_links, "topicId": topicId}
+
+    # Post Callback of links back to callbackurl
     requests.post(callback_url, json=body)

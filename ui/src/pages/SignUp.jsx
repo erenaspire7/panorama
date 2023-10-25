@@ -1,6 +1,5 @@
 import Layout from "../components/Layout";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import axiosInstance from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
@@ -185,7 +184,6 @@ export default function SignUp() {
         </div>
       </div>
       <div className="hidden lg:block w-1/2 bg-emerald-800"></div>
-      <ToastContainer />
     </Layout>
   );
 }

@@ -4,3 +4,4 @@ openai
 boto3
 requests
 psycopg2
+google-api-python-client

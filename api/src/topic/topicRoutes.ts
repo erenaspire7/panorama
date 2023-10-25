@@ -70,4 +70,73 @@ router.post(
   }
 );
 
+router.post(
+  "/retrieve-content",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+
+    let result: BaseResponse = await TopicService.loadContent(
+      data,
+      res.locals.user_id
+    );
+
+    return res.status(result.statusCode).json(result.data);
+  }
+);
+
+router.post(
+  "/retrieve-schedules",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+
+    let result: BaseResponse = await TopicService.loadNotificationSchedule(
+      data,
+      res.locals.user_id
+    );
+
+    return res.status(result.statusCode).json(result.data);
+  }
+);
+
+router.post(
+  "/save-match-mode",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+
+    let result: BaseResponse = await TopicService.saveMatchResult(
+      data,
+      res.locals.user_id
+    );
+
+    return res.status(result.statusCode).json(result.data);
+  }
+);
+
+router.post(
+  "/generate-report",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+
+    let result: BaseResponse = await TopicService.generateReport(
+      data,
+      res.locals.user_id
+    );
+
+    return res.status(result.statusCode).json(result.data);
+  }
+);
+
+router.post(
+  "/generate-additional-links", async(req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+
+    let result: BaseResponse = await TopicService.generateReport(
+      data,
+      res.locals.user_id
+    );
+
+    return res.status(result.statusCode).json(result.data);
+  }
+)
+
 export default router;

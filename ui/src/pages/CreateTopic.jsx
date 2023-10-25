@@ -1,7 +1,7 @@
 import Button from "../components/Button";
 import Layout from "../components/Layout";
 import { useForm } from "react-hook-form";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import axiosInstance from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 
@@ -12,7 +12,7 @@ export default function CreateTopic() {
     formState: { errors },
   } = useForm();
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
@@ -102,7 +102,6 @@ const navigate = useNavigate();
         </div>
       </div>
       <div className="w-1/2 bg-emerald-800"></div>
-      <ToastContainer />
     </Layout>
   );
 }

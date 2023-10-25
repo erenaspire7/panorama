@@ -30,14 +30,15 @@ const verifyJWT = async () => {
       if (decoded["exp"] * 1000 > Date.now()) {
         return token;
       } else {
-        newToken = await refreshToken();
+        token = null;
       }
     } catch (err) {}
-  } else {
-    newToken = await refreshToken();
   }
 
-  sessionStorage.setItem("panorama-access-token", newToken);
+  if (token == null) {
+    newToken = await refreshToken();
+    sessionStorage.setItem("panorama-access-token", newToken);
+  }
 
   return newToken;
 };

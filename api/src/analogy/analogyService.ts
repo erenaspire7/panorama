@@ -16,7 +16,6 @@ class AnalogyService {
 
       let analogy;
 
-      // Check If Analogy Exists
       if (data.analogyId != undefined && data.analogyId != null) {
         analogy = await prisma.analogy.findFirstOrThrow({
           where: {
@@ -31,7 +30,6 @@ class AnalogyService {
           },
         });
 
-        // Generate Title
         const msg = {
           tasks: [
             {

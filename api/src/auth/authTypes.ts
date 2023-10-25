@@ -26,7 +26,6 @@ class SignUpVerifier {
     this.email = data.email;
     this.password = data.password;
 
-    // Validate
     if (!Validator.emailValidator(this.email)) {
       throw Error("Invalid Email Provided!");
     }
@@ -52,6 +51,7 @@ class SignUpVerifier {
       lastName: this.lastName,
       email: this.email,
       password: this.password,
+      spacedRepetitionPattern: [1, 6, 14, 30],
     };
   }
 }

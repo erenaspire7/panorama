@@ -1,11 +1,17 @@
 import Layout from "../components/Layout";
-import { useLoaderData } from "react-router-dom";
-import { useState } from "react";
+import { useLoaderData, useNavigate, useLocation } from "react-router-dom";
 import Button from "../components/Button";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import axiosInstance from "../utils/axios";
+import { toast } from "react-toastify";
 
 export default function WriteMode() {
-  const { questions } = useLoaderData();
+  const { questions, title } = useLoaderData();
+
+  const navigate = useNavigate();
+  const path = useLocation();
+  const id = path.pathname.split("/")[2];
 
   const {
     register,
@@ -26,21 +32,60 @@ export default function WriteMode() {
     });
 
     try {
-      await axiosInstance.post("topic/save-write-quiz", newData);
+      await axiosInstance.post("topic/save-write-quiz", {
+        answers: newData,
+        topicId: id,
+      });
 
       toast.success("Success!", {
         theme: "colored",
         className: "text-sm",
       });
 
-      // Navigate
-    } catch (err) {}
+      navigate(`/topic/${id}`);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
     <Layout>
       <div className="w-full py-10 px-20">
-        <p>Write</p>
+        <div>
+          <h1 className="text-3xl font-bold">{title}.</h1>
+        </div>
+        <div className="mt-2 mb-6 flex items-center">
+          <div className="mr-2">
+            <Button
+              icon={<ArrowLeftIcon className="h-3 w-3" />}
+              onClick={() => navigate(`/topic/${id}`)}
+            />
+          </div>
+          <span>|</span>
+          <div className="ml-2 mr-3">
+            <Button
+              text="Quiz"
+              textSize="text-xs"
+              onClick={() => navigate(`/topic/${id}/flashcards`)}
+            ></Button>
+          </div>
+          <span>|</span>
+          <div className="ml-2 mr-3">
+            <Button
+              text="Match Mode"
+              textSize="text-xs"
+              onClick={() => navigate(`/topic/${id}/match`)}
+            ></Button>
+          </div>
+          <span>|</span>
+          <div className="ml-2">
+            <Button
+              text="Flashcards"
+              textSize="text-xs"
+              onClick={() => navigate(`/topic/${id}/match`)}
+            ></Button>
+          </div>
+        </div>
 
         <div className="py-8">
           <div className=" w-full space-y-8">

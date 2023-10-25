@@ -5,6 +5,8 @@ import topicRoutes from "./topic/topicRoutes";
 import callbackRoutes from "./callback/callbackRoutes";
 import analogyRoutes from "./analogy/analogyRoutes";
 import notificationRoutes from "./notification/notificationRoutes";
+import userRoutes from "./user/userRoutes";
+import taskRoutes from "./task/taskRoutes";
 import { setup } from "./redis";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -70,6 +72,8 @@ app.use("/api/topic", topicRoutes);
 app.use("/api/callback", callbackRoutes);
 app.use("/api/analogy", analogyRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/task", taskRoutes);
 
 httpServer.listen(port);
 console.log(`Running a server at http://localhost:${port}`);

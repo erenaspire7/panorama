@@ -1,39 +1,29 @@
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate, useLocation } from "react-router-dom";
 import Layout from "../components/Layout";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useAnimate } from "framer-motion";
 import { useRef, useState } from "react";
 import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
 } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import SuccessModal from "../components/SuccessModal";
+import Button from "../components/Button";
 
 export default function Flashcard() {
-  const { flashcards } = useLoaderData();
+  const { flashcards, title } = useLoaderData();
+  const navigate = useNavigate();
+  const path = useLocation();
+  const id = path.pathname.split("/")[2];
 
   const [index, setIndex] = useState(0);
   const [key, setKey] = useState("term");
   const [opacity, setOpacity] = useState(1);
   const cardRef = useRef();
 
-  const previous = () => {
-    if (index > 0) {
-      setIndex(index - 1);
-    } else {
-      setIndex(flashcards.length - 1);
-    }
+  const [scope, animate] = useAnimate();
 
-    setKey("term");
-  };
-
-  const next = () => {
-    if (index < flashcards.length) {
-      setIndex(index + 1);
-    } else {
-      setIndex(0);
-    }
-
-    setKey("term");
-  };
+  const [success, setSuccess] = useState(false);
 
   const flip = () => {
     const contentStyle = document.getElementById("content").style;
@@ -60,11 +50,43 @@ export default function Flashcard() {
 
   return (
     <Layout>
-      <div className="-mt-12 px-20 w-full">
-        <div className="flex items-center space-x-8 justify-center h-full">
-          <div onClick={() => previous()} className="cursor-pointer">
-            <ArrowLeftCircleIcon className="w-8 h-8" />
+      <div className="py-10 px-20 w-full">
+        <div>
+          <h1 className="text-3xl font-bold">{title}.</h1>
+        </div>
+        <div className="mt-2 mb-6 flex items-center">
+          <div className="mr-2">
+            <Button
+              icon={<ArrowLeftIcon className="h-3 w-3" />}
+              onClick={() => navigate(`/topic/${id}`)}
+            />
           </div>
+          <span>|</span>
+          <div className="ml-2 mr-3">
+            <Button
+              text="Quiz"
+              textSize="text-xs"
+              onClick={() => navigate(`/topic/${id}/flashcards`)}
+            ></Button>
+          </div>
+          <span>|</span>
+          <div className="ml-2 mr-3">
+            <Button
+              text="Write Mode"
+              textSize="text-xs"
+              onClick={() => navigate(`/topic/${id}/write`)}
+            ></Button>
+          </div>
+          <span>|</span>
+          <div className="ml-2">
+            <Button
+              text="Match Mode"
+              textSize="text-xs"
+              onClick={() => navigate(`/topic/${id}/match`)}
+            ></Button>
+          </div>
+        </div>
+        <div>
           <AnimatePresence>
             <motion.div
               whileHover={{ scale: 1.01 }}
@@ -72,13 +94,13 @@ export default function Flashcard() {
                 scale: 0.9,
               }}
               onTap={() => flip()}
-              className=""
+              ref={scope}
             >
               <div
                 className="h-96 w-[50vw] transition ease-in relative cursor-pointer duration-300	"
                 ref={cardRef}
               >
-                <div className="h-full flex items-center justify-center bg-white border-2 border-black p-4 relative z-50 hover:text-white hover:bg-emerald-500">
+                <div className="h-full flex items-center justify-center bg-white border-2 border-black p-4 relative z-10 hover:text-white hover:bg-emerald-500">
                   <p
                     className="text-lg transition-opacit"
                     id="content"
@@ -93,11 +115,64 @@ export default function Flashcard() {
               </div>
             </motion.div>
           </AnimatePresence>
-          <div onClick={() => next()} className="cursor-pointer">
-            <ArrowRightCircleIcon className="w-8 h-8" />
+        </div>
+        <div className="mt-6 flex items-center w-[50vw] justify-center">
+          <div className="flex items-center space-x-4">
+            <div
+              onClick={async () => {
+                if (index > 0) {
+                  await animate(scope.current, { opacity: 0 });
+                  setIndex(index - 1);
+                  setKey("term");
+                  await animate(scope.current, { opacity: 100 });
+                }
+              }}
+              className="cursor-pointer"
+            >
+              <ArrowLeftCircleIcon
+                className={`${index == 0 ? "opacity-50" : ""} w-8 h-8`}
+              />
+            </div>
+
+            <div>
+              {index + 1} / {flashcards.length}
+            </div>
+
+            <div
+              onClick={async () => {
+                if (index < flashcards.length - 1) {
+                  await animate(scope.current, { opacity: 0 });
+                  setIndex(index + 1);
+                  setKey("term");
+                  await animate(scope.current, { opacity: 100 });
+                }
+
+                if (index == flashcards.length - 1) {
+                  setSuccess(true);
+                }
+              }}
+              className="cursor-pointer"
+            >
+              <ArrowRightCircleIcon className="w-8 h-8" />
+            </div>
           </div>
         </div>
       </div>
+      <SuccessModal
+        show={success}
+        setShow={setSuccess}
+        title={`${flashcards.length} Terms Reviewed! 🎉`}
+        subtitle={`Great job! You've successfully reviewed ${flashcards.length} terms.`}
+        extraButton={
+          <button
+            type="button"
+            className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            onClick={() => navigate(`/topic/${id}/match`)}
+          >
+            Go to Match Mode!
+          </button>
+        }
+      />
     </Layout>
   );
 }

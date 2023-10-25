@@ -26,6 +26,10 @@ import Flashcard from "./pages/Flashcard";
 import MatchMode from "./pages/MatchMode";
 import WriteMode from "./pages/WriteMode";
 import Quiz from "./pages/Quiz";
+import Report from "./pages/Report";
+
+import Settings from "./pages/Settings";
+import EditNotificationSchedules from "./pages/EditNotificationSchedules";
 
 TimeAgo.addDefaultLocale(en);
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -38,7 +42,10 @@ async function navInterceptor({ request }) {
     terms,
     definitions,
     questions,
-    analogyHistory;
+    analogyHistory,
+    title,
+    schedules,
+    reportData;
 
   const path = new URL(request.url).pathname;
   const token = await verifyJWT();
@@ -84,6 +91,7 @@ async function navInterceptor({ request }) {
     });
 
     flashcards = response.data["results"];
+    title = response.data["title"];
 
     terms = flashcards.map((el) => el["term"]);
     definitions = flashcards.map((el) => el["definition"]);
@@ -101,7 +109,30 @@ async function navInterceptor({ request }) {
     });
 
     questions = response.data["results"];
+    title = response.data["title"];
   }
+
+  if (isAuthenticated && path.includes("edit-notification-schedule")) {
+    const topicId = path.split("/")[2];
+
+    let response = await axiosInstance.post("topic/retrieve-schedules", {
+      topicId: topicId,
+    });
+
+    schedules = response.data["results"];
+    title = response.data["title"];
+  }
+
+  if (isAuthenticated && path.includes("report")) {
+    const topicId = path.split("/")[2];
+
+    let response = await axiosInstance.post("topic/generate-report", {
+      topicId: topicId,
+    });
+
+    reportData = response.data;
+  }
+
   if (isAuthenticated && path.includes("quiz")) {
     const topicId = path.split("/")[2];
 
@@ -111,12 +142,10 @@ async function navInterceptor({ request }) {
     });
 
     questions = response.data["results"];
-    
   }
-  
 
   return {
-    isAuthenticated, 
+    isAuthenticated,
     topics,
     notifications,
     flashcards,
@@ -124,6 +153,9 @@ async function navInterceptor({ request }) {
     definitions,
     questions,
     analogyHistory,
+    title,
+    schedules,
+    reportData,
   };
 }
 
@@ -182,7 +214,22 @@ const router = createBrowserRouter([
     path: "/topic/:topicId/quiz",
     element: <Quiz />,
     loader: navInterceptor,
-  }
+  },
+  {
+    path: "/topic/:topicId/edit-notification-schedule",
+    element: <EditNotificationSchedules />,
+    loader: navInterceptor,
+  },
+  {
+    path: "/topic/:topicId/report",
+    element: <Report />,
+    loader: navInterceptor,
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
+    loader: navInterceptor,
+  },
 ]);
 
 root.render(

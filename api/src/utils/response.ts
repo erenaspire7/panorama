@@ -7,6 +7,13 @@ interface ResponseData {
   limit?: number;
   totalPages?: number;
   analogyId?: string;
+  content?: string;
+  title?: string;
+  matchModeData?: any[];
+  avgQuizScore?: any;
+  avgWriteScore?: any;
+  bestMatchModeTime?: any;
+  writtenModeData?: any;
 }
 
 class BaseResponse {

@@ -1,5 +1,5 @@
 import { SignInRequest, SignUpRequest, SignUpVerifier } from "./authTypes";
-import { User } from "../utils/prismaTypes";
+import { User } from "@prisma/client";
 import BaseResponse from "../utils/response";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -110,20 +110,20 @@ class AuthService {
       );
 
       return new BaseResponse(200, response);
-    } catch (e: any) {
+    } catch (err: any) {
       let message, statusCode;
 
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        if (e.code == "P2002") {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code == "P2002") {
           message = "Duplicate Email! Please sign up using another email";
           statusCode = 400;
         } else {
-          console.log(e.message);
+          console.log(err.message);
           message = "Server Error";
           statusCode = 500;
         }
       } else {
-        message = e.message;
+        message = err.message;
         statusCode = 400;
       }
 
@@ -158,14 +158,14 @@ class AuthService {
       }
 
       throw Error("Incorrect login details!");
-    } catch (e: any) {
+    } catch (err: any) {
       let message, statusCode;
 
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
         message = "Server Error";
         statusCode = 500;
       } else {
-        message = e.message;
+        message = err.message;
         statusCode = 400;
       }
 

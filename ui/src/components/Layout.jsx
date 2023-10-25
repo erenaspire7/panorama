@@ -1,4 +1,6 @@
 import Navbar from "./Navbar";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Layout({ children }) {
   return (
@@ -6,6 +8,7 @@ export default function Layout({ children }) {
       <Navbar />
 
       <div className="flex grow">{children}</div>
+      <ToastContainer />
     </div>
   );
 }

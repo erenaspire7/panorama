@@ -5,7 +5,7 @@ export default function Button({ icon, text, textSize, onClick }) {
         <button
           className={`w-full bg-white flex border-2 border-black py-2 px-4 ${
             textSize ?? "text-sm"
-          } space-x-2 z-50 relative items-center`}
+          } space-x-2 z-10 relative items-center`}
           onClick={() => onClick()}
         >
           {text != null ? <span>{text}</span> : ""}

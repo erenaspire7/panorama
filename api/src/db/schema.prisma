@@ -17,20 +17,21 @@ enum QuizType {
 }
 
 model User {
-    id           String         @id @default(uuid())
-    firstName    String
-    lastName     String
-    email        String         @unique
-    password     String?
-    avatar       String?
-    regDate      DateTime       @default(now())
-    refreshToken String?
-    folders      Folder[]
-    analogies    Analogy[]
-    otp          Otp?
-    Topic        Topic[]
-    Notification Notification[]
-    Devices      Devices[]
+    id                      String         @id @default(uuid())
+    firstName               String
+    lastName                String
+    email                   String         @unique
+    password                String?
+    avatar                  String?
+    regDate                 DateTime       @default(now())
+    refreshToken            String?
+    spacedRepetitionPattern Int[]
+    folders                 Folder[]
+    analogies               Analogy[]
+    otp                     Otp?
+    Topic                   Topic[]
+    Notification            Notification[]
+    Devices                 Devices[]
 }
 
 model Folder {
@@ -44,18 +45,19 @@ model Folder {
 }
 
 model Topic {
-    id         String     @id @default(uuid())
-    name       String     @unique
-    data       String
-    regDate    DateTime   @default(now())
-    archived   Boolean    @default(false)
-    folderId   String?
-    folder     Folder?    @relation(fields: [folderId], references: [id])
-    userId     String
-    user       User       @relation(fields: [userId], references: [id])
-    questions  Question?
-    flashcards Flashcard?
-    results    Result[]
+    id          String     @id @default(uuid())
+    name        String     @unique
+    data        String
+    regDate     DateTime   @default(now())
+    archived    Boolean    @default(false)
+    folderId    String?
+    folder      Folder?    @relation(fields: [folderId], references: [id])
+    userId      String
+    user        User       @relation(fields: [userId], references: [id])
+    questions   Question?
+    flashcards  Flashcard?
+    results     Result[]
+    Schedule    Schedule[]
 }
 
 model Question {
@@ -125,4 +127,13 @@ model Devices {
     regDate           DateTime @default(now())
     userId            String
     user              User     @relation(fields: [userId], references: [id])
+}
+
+model Schedule {
+    id                     String   @id @default(uuid())
+    completed              Boolean  @default(false)
+    expectedCompletionDate DateTime
+    notified               Boolean  @default(false)
+    topicId                String
+    topic                  Topic    @relation(fields: [topicId], references: [id])
 }

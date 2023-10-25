@@ -68,4 +68,16 @@ router.post(
   }
 );
 
+router.post(
+  "/retrieve-links",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+
+    res.locals.io.emit("additional-links", data);
+
+    return res.status(200).json({});
+
+  }
+);
+
 export default router;

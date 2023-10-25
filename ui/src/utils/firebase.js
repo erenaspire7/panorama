@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import axiosInstance from "./axios";
+import { toast } from "react-toastify";
 
 var firebaseConfig = {
   apiKey: "AIzaSyCk97rfItCf5OfOc2zlEzYhn2eOYN31L_Q",
@@ -13,6 +14,13 @@ var firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 const messaging = getMessaging(firebaseApp);
+
+onMessage(messaging, (payload) => {
+  toast.info(payload.notification.body, {
+    theme: "colored",
+    className: "text-sm",
+  });
+});
 
 const requestPermission = () => {
   if (

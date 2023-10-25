@@ -8,6 +8,7 @@ import {
   UpdateResultRequest,
 } from "./callbackTypes";
 import NotificationService from "../notification/notificationService";
+import { request } from "http";
 
 class CallbackService {
   public static createQuestion = async (request: TopicCallbackRequest) => {
@@ -24,9 +25,26 @@ class CallbackService {
         },
       });
 
-      await prisma.question.create({
-        data: request,
+      let question = await prisma.question.findFirst({
+        where: {
+          topicId: request.topicId,
+        },
       });
+
+      if (question == null) {
+        await prisma.question.create({
+          data: request,
+        });
+      } else {
+        await prisma.question.update({
+          where: {
+            topicId: request.topicId,
+          },
+          data: {
+            data: request.data,
+          },
+        });
+      }
 
       return new BaseResponse(200, {});
     } catch (err: any) {
@@ -54,15 +72,32 @@ class CallbackService {
         throw Error("Invalid payload received!");
       }
 
-      let topic = await prisma.topic.findFirstOrThrow({
+      const topic = await prisma.topic.findFirstOrThrow({
         where: {
           id: request.topicId,
         },
       });
 
-      await prisma.flashcard.create({
-        data: request,
+      let flashcard = await prisma.flashcard.findFirst({
+        where: {
+          topicId: request.topicId,
+        },
       });
+
+      if (flashcard == null) {
+        await prisma.flashcard.create({
+          data: request,
+        });
+      } else {
+        await prisma.flashcard.update({
+          where: {
+            topicId: request.topicId,
+          },
+          data: {
+            data: request.data,
+          },
+        });
+      }
 
       await NotificationService.create(
         "Great news! The questions and flashcards are now ready for you! 🎉📚✨",
