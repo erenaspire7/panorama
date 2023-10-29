@@ -45,19 +45,19 @@ model Folder {
 }
 
 model Topic {
-    id          String     @id @default(uuid())
-    name        String     @unique
-    data        String
-    regDate     DateTime   @default(now())
-    archived    Boolean    @default(false)
-    folderId    String?
-    folder      Folder?    @relation(fields: [folderId], references: [id])
-    userId      String
-    user        User       @relation(fields: [userId], references: [id])
-    questions   Question?
-    flashcards  Flashcard?
-    results     Result[]
-    Schedule    Schedule[]
+    id         String     @id @default(uuid())
+    name       String     @unique
+    data       String
+    regDate    DateTime   @default(now())
+    archived   Boolean    @default(false)
+    folderId   String?
+    folder     Folder?    @relation(fields: [folderId], references: [id])
+    userId     String
+    user       User       @relation(fields: [userId], references: [id])
+    questions  Question?
+    flashcards Flashcard?
+    results    Result[]
+    Schedule   Schedule[]
 }
 
 model Question {
@@ -130,10 +130,11 @@ model Devices {
 }
 
 model Schedule {
-    id                     String   @id @default(uuid())
-    completed              Boolean  @default(false)
+    id                     String    @id @default(uuid())
+    completed              Boolean   @default(false)
+    actualCompletionDate   DateTime?
     expectedCompletionDate DateTime
-    notified               Boolean  @default(false)
+    notified               Boolean   @default(false)
     topicId                String
-    topic                  Topic    @relation(fields: [topicId], references: [id])
+    topic                  Topic     @relation(fields: [topicId], references: [id])
 }

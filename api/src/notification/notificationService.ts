@@ -37,7 +37,7 @@ class NotificationService {
       getMessaging()
         .send(message)
         .then((response) => {
-          console.log("Successfully sent message:", response);
+          // console.log("Successfully sent message:", response);
         });
     }
   };

@@ -15,6 +15,7 @@ import prisma from "../prisma";
 import { redisClient } from "../redis";
 import Validator from "../utils/validator";
 import NotificationService from "../notification/notificationService";
+import { isSameDay } from "../utils/helper";
 
 const client = new S3Client({
   region: "eu-west-1",
@@ -483,7 +484,7 @@ class TopicService {
 
       for (let el of data["newDates"]) {
         let id = el["id"];
-        let date = el["date"];
+        let date = new Date(el["expectedCompletionDate"]);
 
         await prisma.schedule.update({
           where: {
@@ -694,9 +695,132 @@ class TopicService {
     }
   };
 
-  public static getAdditionalLinks = () => {
+  public static saveDefaultMode = async (data: any, user_id: string) => {
+    try {
+      const requiredProps = ["topicId", "correctAnswers", "totalQuestions"];
 
-  }
+      if (!Validator.interfaceValidator(data, requiredProps)) {
+        throw Error("Invalid payload received!");
+      }
+
+      await prisma.topic.findFirstOrThrow({
+        where: {
+          userId: user_id,
+          id: data.topicId,
+        },
+      });
+
+      const id = uuidv4();
+      const fileName = `${id}.json`;
+      const key = `${user_id}/default/${fileName}`;
+
+      const command = new PutObjectCommand({
+        Bucket: "panorama-user-content",
+        Key: key,
+        Body: JSON.stringify({
+          correctAnswers: data["correctAnswers"],
+          totalQuestions: data["totalQuestions"],
+        }),
+      });
+
+      await client.send(command);
+
+      let score = (data["correctAnswers"] / data["totalQuestions"]) * 100;
+
+      await prisma.result.create({
+        data: {
+          id: id,
+          quizType: QuizType.DEFAULT,
+          data: fileName,
+          topicId: data.topicId,
+          score: Math.round(score * 100) / 100,
+        },
+      });
+
+      return new BaseResponse(200, {});
+    } catch (err: any) {
+      let message, statusCode;
+
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        message = "Server Error";
+        statusCode = 500;
+      } else {
+        message = err.message;
+        statusCode = 400;
+      }
+
+      return new BaseResponse(statusCode, {
+        message: message,
+      });
+    }
+  };
+
+  public static logStudy = async (data: any, user_id: any) => {
+    try {
+      const requiredProps = ["topicId"];
+
+      await prisma.topic.findFirstOrThrow({
+        where: {
+          userId: user_id,
+          id: data.topicId,
+        },
+      });
+
+      let create = true;
+
+      if (!Validator.interfaceValidator(data, requiredProps)) {
+        throw Error("Invalid payload received!");
+      }
+
+      let mostRecentEntry = await prisma.schedule.findFirst({
+        where: {
+          topicId: data["topicId"],
+          completed: true,
+        },
+      });
+
+      let entryToUpdate = await prisma.schedule.findFirst({
+        where: {
+          topicId: data["topicId"],
+          completed: false,
+        },
+        orderBy: {
+          expectedCompletionDate: "asc",
+        },
+      });
+
+      if (mostRecentEntry != null) {
+        create = isSameDay(mostRecentEntry.actualCompletionDate!, new Date());
+      }
+
+      if (create && entryToUpdate != null) {
+        await prisma.schedule.update({
+          where: {
+            id: entryToUpdate.id,
+          },
+          data: {
+            actualCompletionDate: new Date(),
+          },
+        });
+      }
+
+      return new BaseResponse(200, {});
+    } catch (err: any) {
+      let message, statusCode;
+
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        message = "Server Error";
+        statusCode = 500;
+      } else {
+        message = err.message;
+        statusCode = 400;
+      }
+
+      return new BaseResponse(statusCode, {
+        message: message,
+      });
+    }
+  };
 }
 
 export default TopicService;

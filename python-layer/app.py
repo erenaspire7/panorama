@@ -37,7 +37,7 @@ async def poll():
 async def main():
     redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASS)
 
-    asyncio.create_task(poll())
+    # asyncio.create_task(poll())
 
     async with redis_client.pubsub() as pubsub:
         await pubsub.subscribe("task_channel")

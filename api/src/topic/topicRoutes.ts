@@ -127,16 +127,39 @@ router.post(
 );
 
 router.post(
-  "/generate-additional-links", async(req: Request, res: Response, next: NextFunction) => {
+  "/save-default-quiz",
+  async (req: Request, res: Response, next: NextFunction) => {
     let data = req.body;
 
-    let result: BaseResponse = await TopicService.generateReport(
+    let result = await TopicService.saveDefaultMode(data, res.locals.user_id);
+
+    return res.status(result.statusCode).json(result.data);
+  }
+);
+
+router.post(
+  "/edit-spaced-schedules",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+
+    let result = await TopicService.editTopicSpacedRepetittion(
       data,
       res.locals.user_id
     );
 
     return res.status(result.statusCode).json(result.data);
   }
-)
+);
+
+router.post(
+  "/log-study",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let data = req.body;
+
+    let result = await TopicService.logStudy(data, res.locals.user_id);
+
+    return res.status(result.statusCode).json(result.data);
+  }
+);
 
 export default router;
