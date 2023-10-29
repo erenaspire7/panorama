@@ -23,13 +23,13 @@ export default function DropdownMenu({ menuButton, links }) {
                     {({ active }) => (
                       <button
                         className={`${
-                          active ? "bg-emerald-500 text-white" : "text-gray-900"
+                          active ? "bg-teal-500 text-white" : "text-gray-900"
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                         onClick={async () =>
                           el["onClick"] != null ? await el["onClick"]() : null
                         }
                       >
-                        <div className={`${active ? "" : "text-emerald-500"}`}>
+                        <div className={`${active ? "" : "text-teal-500"}`}>
                           {el["icon"]}
                         </div>
                         {el["text"]}

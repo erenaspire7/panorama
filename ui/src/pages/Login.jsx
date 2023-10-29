@@ -115,7 +115,7 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <div className="hidden lg:block w-1/2 bg-emerald-800"></div>
+      <div className="hidden lg:block w-1/2 bg-teal-800"></div>
     </Layout>
   );
 }

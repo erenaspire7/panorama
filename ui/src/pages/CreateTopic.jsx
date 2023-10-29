@@ -44,7 +44,7 @@ export default function CreateTopic() {
             <input
               type="text"
               id="title"
-              className="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none text-black dark:border-gray-600 dark:focus:border-emerald-500 focus:outline-none focus:ring-0 peer"
+              className="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none text-black dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 peer"
               placeholder=" "
               {...register("title", {
                 required: true,
@@ -53,7 +53,7 @@ export default function CreateTopic() {
             />
             <label
               htmlFor="title"
-              className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-emerald-600  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-teal-600  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
             >
               Title
             </label>
@@ -70,7 +70,7 @@ export default function CreateTopic() {
             <textarea
               type="text"
               id="floating_standard"
-              className="resize-none block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none text-black dark:border-gray-600 dark:focus:border-emerald-500 focus:outline-none focus:ring-0 peer"
+              className="resize-none block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none text-black dark:border-gray-600 dark:focus:border-teal-500 focus:outline-none focus:ring-0 peer"
               placeholder=" "
               rows={16}
               {...register("content", {
@@ -80,7 +80,7 @@ export default function CreateTopic() {
             />
             <label
               htmlFor="floating_standard"
-              className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-emerald-600  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-teal-600  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
             >
               Note
             </label>
@@ -101,7 +101,7 @@ export default function CreateTopic() {
           </div>
         </div>
       </div>
-      <div className="w-1/2 bg-emerald-800"></div>
+      <div className="w-1/2 bg-teal-800"></div>
     </Layout>
   );
 }

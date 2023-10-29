@@ -111,7 +111,7 @@ export default function Navbar() {
           >
             <BellIcon className="h-5 w-5" />
             {notifications.length > 0 ? (
-              <div className="top-0 right-0 absolute h-2 w-2 bg-emerald-500 rounded-full"></div>
+              <div className="top-0 right-0 absolute h-2 w-2 bg-teal-500 rounded-full"></div>
             ) : (
               <></>
             )}
@@ -120,7 +120,7 @@ export default function Navbar() {
           <DropdownMenu
             menuButton={
               <div className="relative">
-                <Menu.Button className="rounded-full bg-emerald-500 w-9 h-9 "></Menu.Button>
+                <Menu.Button className="rounded-full bg-teal-500 w-9 h-9 "></Menu.Button>
               </div>
             }
             links={profileLinks}

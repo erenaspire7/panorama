@@ -9,9 +9,10 @@ import {
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import SuccessModal from "../components/SuccessModal";
 import Button from "../components/Button";
+import axiosInstance from "../utils/axios";
 
 export default function Flashcard() {
-  const { flashcards, title } = useLoaderData();
+  const { flashcards } = useLoaderData();
   const navigate = useNavigate();
   const path = useLocation();
   const id = path.pathname.split("/")[2];
@@ -50,9 +51,9 @@ export default function Flashcard() {
 
   return (
     <Layout>
-      <div className="py-10 px-20 w-full">
+      <div className="py-10 px-20 w-full flex flex-col items-center">
         <div>
-          <h1 className="text-3xl font-bold">{title}.</h1>
+          <h1 className="text-3xl font-bold">Flashcards.</h1>
         </div>
         <div className="mt-2 mb-6 flex items-center">
           <div className="mr-2">
@@ -66,7 +67,7 @@ export default function Flashcard() {
             <Button
               text="Quiz"
               textSize="text-xs"
-              onClick={() => navigate(`/topic/${id}/flashcards`)}
+              onClick={() => navigate(`/topic/${id}/quiz`)}
             ></Button>
           </div>
           <span>|</span>
@@ -100,7 +101,7 @@ export default function Flashcard() {
                 className="h-96 w-[50vw] transition ease-in relative cursor-pointer duration-300	"
                 ref={cardRef}
               >
-                <div className="h-full flex items-center justify-center bg-white border-2 border-black p-4 relative z-10 hover:text-white hover:bg-emerald-500">
+                <div className="h-full flex items-center justify-center bg-white border-2 border-black p-4 relative z-10 hover:text-white hover:bg-teal-500">
                   <p
                     className="text-lg transition-opacit"
                     id="content"
@@ -148,6 +149,12 @@ export default function Flashcard() {
                 }
 
                 if (index == flashcards.length - 1) {
+                  try {
+                    await axiosInstance.post("topic/log-study", {
+                      topicId: id,
+                    });
+                  } catch (err) {}
+
                   setSuccess(true);
                 }
               }}

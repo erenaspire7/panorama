@@ -9,7 +9,7 @@ export default function Card({ title, onClick }) {
       className="relative cursor-pointer text-left"
       onClick={() => (onClick != undefined ? onClick() : null)}
     >
-      <div className="bg-white border-2 border-black p-4 relative z-50 hover:text-white hover:bg-emerald-500">
+      <div className="bg-white border-2 border-black p-4 relative z-50 hover:text-white hover:bg-teal-500">
         <EllipsisHorizontalIcon className="h-6 w-6" />
         <p className="text-lg">{title}</p>
       </div>

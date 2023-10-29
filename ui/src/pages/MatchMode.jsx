@@ -92,6 +92,12 @@ export default function MatchMode() {
         })
         .catch(() => {});
 
+      axiosInstance
+        .post("topic/log-study", {
+          topicId: id,
+        })
+        .catch(() => {});
+
       setSuccess(true);
     }
   }, [displayedTerms]);
@@ -141,7 +147,7 @@ export default function MatchMode() {
     <Layout>
       <div className="w-full py-10 px-20">
         <div className="flex justify-between items-center ">
-          <h1 className="text-3xl font-bold">{title}.</h1>
+          <h1 className="text-3xl font-bold">Match Mode.</h1>
           <p id="timer" className="text-2xl font-bold tracking-tighter">
             00:00
           </p>
@@ -158,7 +164,7 @@ export default function MatchMode() {
             <Button
               text="Quiz"
               textSize="text-xs"
-              onClick={() => navigate(`/topic/${id}/flashcards`)}
+              onClick={() => navigate(`/topic/${id}/quiz`)}
             ></Button>
           </div>
           <span>|</span>
@@ -191,9 +197,9 @@ export default function MatchMode() {
                   <div
                     className={`h-full flex items-center justify-center ${
                       chosenTerm == index
-                        ? "bg-emerald-700 text-white"
+                        ? "bg-teal-700 text-white"
                         : "bg-white"
-                    } border-2 border-black p-4 relative z-50 hover:text-white hover:bg-emerald-500`}
+                    } border-2 border-black p-4 relative z-50 hover:text-white hover:bg-teal-500`}
                   >
                     <p>{el}</p>
                   </div>
@@ -217,9 +223,9 @@ export default function MatchMode() {
                     className={`
                     h-full flex items-center justify-center ${
                       chosenDefinition == index
-                        ? "bg-emerald-700 text-white"
+                        ? "bg-teal-700 text-white"
                         : "bg-white"
-                    } border-2 border-black p-4 relative z-50 hover:text-white hover:bg-emerald-500`}
+                    } border-2 border-black p-4 relative z-50 hover:text-white hover:bg-teal-500`}
                   >
                     <p>{el}</p>
                   </div>

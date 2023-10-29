@@ -7,8 +7,6 @@ import {
 } from "react-router-dom";
 import en from "javascript-time-ago/locale/en.json";
 import TimeAgo from "javascript-time-ago";
-// import { requestPermission } from "./../public/firebase-messaging-sw";
-
 import "./index.css";
 import verifyJWT from "./utils/verifyJWT";
 import axiosInstance from "./utils/axios";

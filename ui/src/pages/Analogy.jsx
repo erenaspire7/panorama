@@ -103,7 +103,7 @@ export default function Analogy() {
           maxHeight: "calc(100vh - 68px)",
         }}
       >
-        <div className="hidden lg:block lg:w-1/6 bg-emerald-800 flex flex-col p-2">
+        <div className="hidden lg:block lg:w-1/6 bg-teal-800 flex flex-col p-2">
           <div className="flex justify-center">
             <div className="">
               <Button

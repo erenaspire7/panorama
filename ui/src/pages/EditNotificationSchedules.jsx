@@ -5,11 +5,17 @@ import Datepicker from "react-tailwindcss-datepicker";
 import { isSameDay } from "date-fns";
 import Button from "../components/Button";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import axiosInstance from "../utils/axios";
+import { toast } from "react-toastify";
 
 export default function EditNotificationSchedules() {
   const { schedules, title } = useLoaderData();
 
-  const [displayedSchedules, setDisplayedSchedules] = useState(schedules);
+  const [displayedSchedules, setDisplayedSchedules] = useState(
+    JSON.parse(JSON.stringify(schedules))
+  );
+
+  // setDisplayedSchedules(schedules)
 
   const navigate = useNavigate();
   const path = useLocation();
@@ -21,19 +27,74 @@ export default function EditNotificationSchedules() {
       topicId: id,
     };
 
+    axiosInstance
+      .post("topic/edit-spaced-schedules", payload)
+      .then(() => {
+        toast.success("Success!", {
+          theme: "colored",
+          className: "text-sm",
+        });
+
+        setTimeout(() => {
+          navigate(`/topic/${id}`);
+        }, 1000);
+      })
+      .catch(() => {});
+
     // Update and Navigate Back
   };
 
   return (
     <Layout>
-      <div className="p-20">
-        <div className="mb-6 flex items-center space-x-4">
-          <button onClick={() => navigate(`/topic/${id}`)}>
-            <ArrowLeftIcon className="h-4 w-4" />
-          </button>
-          <h1 className="text-3xl font-bold">{title}.</h1>
+      <div className="pt-16 p-20 w-full flex flex-col items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Edit Notification Schedules.</h1>
         </div>
-        <div>Edit Notification Schedule</div>
+        <div className="mt-2 mb-6 flex items-center">
+          <div className="mr-2">
+            <Button
+              icon={<ArrowLeftIcon className="h-3 w-3" />}
+              onClick={() => navigate(`/topic/${id}`)}
+            />
+          </div>
+          <span>|</span>
+
+          <div className="ml-2 mr-3">
+            <Button
+              text="Flashcards"
+              textSize="text-xs"
+              onClick={() => navigate(`/topic/${id}/flashcards`)}
+            ></Button>
+          </div>
+
+          <span>|</span>
+          <div className="ml-2 mr-3">
+            <Button
+              text="Quiz"
+              textSize="text-xs"
+              onClick={() => navigate(`/topic/${id}/quiz`)}
+            ></Button>
+          </div>
+          <span>|</span>
+          <div className="ml-2 mr-3">
+            <Button
+              text="Write Mode"
+              textSize="text-xs"
+              onClick={() => navigate(`/topic/${id}/write`)}
+            ></Button>
+          </div>
+          <span>|</span>
+          <div className="ml-2">
+            <Button
+              text="Match Mode"
+              textSize="text-xs"
+              onClick={() => navigate(`/topic/${id}/match`)}
+            ></Button>
+          </div>
+        </div>
+
+        <div></div>
+
         {displayedSchedules.map((el, index) => {
           let date = new Date(el["expectedCompletionDate"]);
           let today = new Date();
@@ -65,7 +126,7 @@ export default function EditNotificationSchedules() {
           );
         })}
 
-        <div className="flex justify-end mt-6">
+        <div className="flex justify-end mt-6 z-0">
           <Button text={"Submit"} onClick={() => update()} />
         </div>
       </div>

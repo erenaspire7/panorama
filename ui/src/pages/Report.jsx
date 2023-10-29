@@ -4,6 +4,15 @@ import Button from "../components/Button";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
+import {
+  CircularProgressbar,
+  CircularProgressbarWithChildren,
+  buildStyles,
+} from "react-circular-progressbar";
+import ChangingProgressProvider from "../components/ChangingProgressProvider";
+import "react-circular-progressbar/dist/styles.css";
 
 export default function Report() {
   const navigate = useNavigate();
@@ -17,14 +26,12 @@ export default function Report() {
     const socket = io("http://localhost:4000");
 
     socket.on("additional-links", (data) => {
-      console.log(data);
       if (data["topicId"] == id) {
         setLinks(data["links"]);
       }
     });
 
     return () => {
-      // Clean up the socket connection when the component unmounts
       socket.disconnect();
     };
   }, []);
@@ -40,15 +47,36 @@ export default function Report() {
     (prop) => reportData[prop] != undefined && reportData[prop] != null
   );
 
+  const generatePDF = async () => {
+    let content = document.getElementsByTagName("body")[0];
+
+    html2canvas(content).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png", 1.0);
+
+      const pdf = new jsPDF({
+        format: [canvas.width, canvas.height],
+      });
+      pdf.addImage(
+        imgData,
+        "PNG",
+        0,
+        0,
+        pdf.internal.pageSize.getWidth(),
+        pdf.internal.pageSize.getHeight()
+      );
+      pdf.save("report.pdf");
+    });
+  };
+
   console.log(reportData);
 
   return (
     <Layout>
       <div className="py-10 px-20 w-full items-center flex flex-col">
         <div>
-          <h1 className="text-3xl font-bold">{reportData["title"]}.</h1>
+          <h1 className="text-3xl font-bold">Report.</h1>
         </div>
-        <div className="mt-2 mb-6 flex items-center">
+        <div className="mt-4 mb-12 flex items-center">
           <div className="mr-2">
             <Button
               icon={<ArrowLeftIcon className="h-3 w-3" />}
@@ -56,11 +84,21 @@ export default function Report() {
             />
           </div>
           <span>|</span>
+
+          <div className="ml-2 mr-3">
+            <Button
+              text="Flashcards"
+              textSize="text-xs"
+              onClick={() => navigate(`/topic/${id}/flashcards`)}
+            ></Button>
+          </div>
+
+          <span>|</span>
           <div className="ml-2 mr-3">
             <Button
               text="Quiz"
               textSize="text-xs"
-              onClick={() => navigate(`/topic/${id}/flashcards`)}
+              onClick={() => navigate(`/topic/${id}/quiz`)}
             ></Button>
           </div>
           <span>|</span>
@@ -72,67 +110,120 @@ export default function Report() {
             ></Button>
           </div>
           <span>|</span>
-          <div className="ml-2">
+          <div className="ml-2 mr-3">
             <Button
               text="Match Mode"
               textSize="text-xs"
               onClick={() => navigate(`/topic/${id}/match`)}
             ></Button>
           </div>
+          <span>|</span>
+          <div className="ml-2">
+            <Button
+              text="PDF"
+              textSize="text-xs"
+              onClick={async () => await generatePDF()}
+            ></Button>
+          </div>
         </div>
-        <div className="w-1/2">
+
+        <div className="lg:w-3/4 space-y-8">
           {hasData ? (
-            <div className="space-y-4">
-              <div className="w-full bg-gray-200 p-6">
-                <div className="text-xs">Info</div>
-                <div className="items-center justify-between">
-                  <p>
-                    Average Write Mode Score:{" "}
-                    {reportData["avgWriteScore"] ?? "N/A"}
-                  </p>
-                  <p>
-                    Average Quiz Mode Score:{" "}
-                    {reportData["avgQuizScore"] ?? "N/A"}
-                  </p>
+            <div className="space-y-8">
+              <div className="flex space-x-8">
+                <div className="flex w-1/2 space-x-4 items-center justify-center p-4 rounded-lg bg-[#14b8a6]">
+                  <div className="flex flex-col items-center mb-2">
+                    <div style={{ width: 100, height: 100 }}>
+                      <ChangingProgressProvider
+                        values={[0, reportData["avgWriteScore"] * 10]}
+                      >
+                        {(value) => (
+                          <CircularProgressbarWithChildren
+                            value={value}
+                            className="font-bold"
+                            text={`${value}%`}
+                            circleRatio={0.75}
+                            styles={buildStyles({
+                              rotation: 1 / 2 + 1 / 8,
+                              trailColor: "#fff",
+                              pathColor: "#F6CB51",
+                              textColor: "#F6CB51",
+                              textSize: 16,
+                            })}
+                          ></CircularProgressbarWithChildren>
+                        )}
+                      </ChangingProgressProvider>
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white text-center">
+                        Avg Write Mode Score
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center mb-2">
+                    <div style={{ width: 100, height: 100 }}>
+                      <ChangingProgressProvider
+                        values={[0, reportData["avgQuizScore"] * 100]}
+                      >
+                        {(value) => (
+                          <CircularProgressbarWithChildren
+                            value={value}
+                            className="font-bold"
+                            text={`${value > 0 ? value + "%" : "N/A"}`}
+                            circleRatio={0.75}
+                            styles={buildStyles({
+                              rotation: 1 / 2 + 1 / 8,
+                              trailColor: "#fff",
+                              pathColor: "#F6CB51",
+                              textColor: "#F6CB51",
+                              textSize: 16,
+                            })}
+                          ></CircularProgressbarWithChildren>
+                        )}
+                      </ChangingProgressProvider>
+                    </div>
+                    <div className="">
+                      <p className="text-sm font-bold text-white text-center">
+                        Avg Quiz Mode Score
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col grow p-8 bg-[#F6CC52] rounded-lg text-black">
+                  <p className="text-xl font-bold ">Additional Reading</p>
+
+                  <div className="space-y-2">
+                    {links.map((el) => (
+                      <li>
+                        <a href={`${el["link"]}`} target="_blank">
+                          {el["link"]}
+                        </a>
+                      </li>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {reportData["matchModeData"] != null &&
-              reportData["matchModeData"].length > 0 ? (
-                <div>
-                  <p>Top 5</p>
-                </div>
-              ) : (
-                <></>
-              )}
-
-              {reportData["writtenModeData"] != null ? (
+              <div className="bg-[#E6E9F3] w-full rounded-lg p-8">
                 <div className="space-y-4">
-                  <p>Most Recent Written Mode</p>
+                  {reportData["writtenModeData"] != null ? (
+                    <div className="space-y-4">
+                      <p className=" font-bold text-xl ">
+                        Most Recent Written Mode
+                      </p>
 
-                  {reportData["writtenModeData"].map((el) => (
-                    <div>
-                      <p>Q: {el["question"]}</p>
-                      <p>A: {el["userAnswer"]}</p>
-                      <p>C: {el["comments"]}</p>
+                      {reportData["writtenModeData"].map((el) => (
+                        <div>
+                          <p>Q: {el["question"]}</p>
+                          <p>A: {el["userAnswer"]}</p>
+                          <p>C: {el["comment"]}</p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <></>
-              )}
-
-              <div>
-                <p>Additional Reading!</p>
-
-                <div className="space-y-2">
-                  {links.map((el) => (
-                    <p>
-                      <a href={`${el["link"]}`} target="_blank">
-                        {el["title"]}
-                      </a>
-                    </p>
-                  ))}
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </div>
             </div>
