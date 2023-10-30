@@ -22,7 +22,7 @@ initializeApp({
 const app = express();
 const port = 4000;
 
-const accessOrigins = ["http://localhost:5173", "http://ui"];
+const accessOrigins = ["http://localhost:5173", "https://panorama-b0e75.web.app"];
 
 (async () => {
   await setup();
