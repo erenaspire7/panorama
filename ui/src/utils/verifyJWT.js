@@ -6,7 +6,7 @@ const refreshToken = async () => {
 
   try {
     let response = await axios.post(
-      "http://localhost:4000/api/auth/refresh-token",
+      `${import.meta.env.VITE_API_URL}/api/auth/refresh-token`,
       payload,
       {
         withCredentials: true,

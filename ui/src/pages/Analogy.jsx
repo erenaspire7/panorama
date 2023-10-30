@@ -19,7 +19,7 @@ export default function Analogy() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const socket = io("http://localhost:4000");
+    const socket = io(`${import.meta.env.VITE_API_URL}`);
 
     socket.on("analogy-event", (data) => {
       if (data["analogyId"] == analogyId.current) {
