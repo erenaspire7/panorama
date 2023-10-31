@@ -11,17 +11,19 @@ export default function Topic() {
   const id = path.pathname.split("/")[2];
 
   const validate = async (url) => {
-    let checkFlashcards = await axiosInstance.post("topic/flashcards", {
-      topicId: id,
-    });
+    try {
+      let checkFlashcards = await axiosInstance.post("topic/flashcards", {
+        topicId: id,
+      });
 
-    let checkQuestions = await axiosInstance.post("topic/questions", {
-      topicId: id,
-    });
+      let checkQuestions = await axiosInstance.post("topic/questions", {
+        topicId: id,
+      });
 
-    if (checkFlashcards.status == 200 && checkQuestions.status == 200) {
-      navigate(url);
-    } else {
+      if (checkFlashcards.status == 200 && checkQuestions.status == 200) {
+        navigate(url);
+      }
+    } catch (err) {
       toast.info("Content is still being generated. Please be patient.", {
         theme: "colored",
         className: "text-sm",

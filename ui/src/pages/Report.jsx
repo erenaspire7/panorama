@@ -141,7 +141,7 @@ export default function Report() {
                           <CircularProgressbarWithChildren
                             value={value}
                             className="font-bold"
-                            text={`${value}%`}
+                            text={`${value > 0 ? value + "%" : "N/A"}`}
                             circleRatio={0.75}
                             styles={buildStyles({
                               rotation: 1 / 2 + 1 / 8,
@@ -205,9 +205,9 @@ export default function Report() {
                 </div>
               </div>
 
-              <div className="bg-[#E6E9F3] w-full rounded-lg p-8">
-                <div className="space-y-4">
-                  {reportData["writtenModeData"] != null ? (
+              {reportData["writtenModeData"] != null ? (
+                <div className="bg-[#E6E9F3] w-full rounded-lg p-8">
+                  <div className="space-y-4">
                     <div className="space-y-4">
                       <p className=" font-bold text-xl ">
                         Most Recent Written Mode
@@ -221,11 +221,11 @@ export default function Report() {
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <></>
-                  )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <></>
+              )}
             </div>
           ) : (
             <div className="w-full bg-gray-200 p-6">

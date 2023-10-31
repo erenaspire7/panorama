@@ -50,6 +50,7 @@ export default function Quiz() {
 
     axiosInstance
       .post("topic/save-default-quiz", {
+        topicId: id,
         correctAnswers: score,
         totalQuestions: questions.length,
       })
@@ -195,7 +196,7 @@ export default function Quiz() {
               {currentQuestion === questions.length - 1 && (
                 <button
                   onClick={handleQuizSubmit}
-                  className={`transition ease-in relative cursor-pointer duration-300 bg-white border-2 border-black p-4 relative z-50 hover:text-black hover:bg-gray-300`}
+                  className={`transition ease-in relative cursor-pointer duration-300 bg-white border-2 border-black p-4 relative hover:text-black hover:bg-gray-300`}
                 >
                   Submit
                 </button>
