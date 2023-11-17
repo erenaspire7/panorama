@@ -120,6 +120,7 @@ class TopicService {
       let topics = await prisma.topic.findMany({
         where: {
           userId: user_id,
+          archived: false
         },
       });
 

@@ -13,6 +13,7 @@ import {
 } from "react-circular-progressbar";
 import ChangingProgressProvider from "../components/ChangingProgressProvider";
 import "react-circular-progressbar/dist/styles.css";
+import { isNumeric } from "../utils/helper";
 
 export default function Report() {
   const navigate = useNavigate();
@@ -130,29 +131,27 @@ export default function Report() {
         <div className="lg:w-3/4 space-y-8">
           {hasData ? (
             <div className="space-y-8">
-              <div className="flex space-x-8">
-                <div className="flex w-1/2 space-x-4 items-center justify-center p-4 rounded-lg bg-[#14b8a6]">
+              <div className="flex space-x-8 w-full">
+                <div className="flex w-1/3 space-x-4 items-center justify-center p-4 rounded-lg bg-[#14b8a6]">
                   <div className="flex flex-col items-center mb-2">
                     <div style={{ width: 100, height: 100 }}>
-                      <ChangingProgressProvider
-                        values={[0, reportData["avgWriteScore"] * 10]}
-                      >
-                        {(value) => (
-                          <CircularProgressbarWithChildren
-                            value={value}
-                            className="font-bold"
-                            text={`${value > 0 ? value + "%" : "N/A"}`}
-                            circleRatio={0.75}
-                            styles={buildStyles({
-                              rotation: 1 / 2 + 1 / 8,
-                              trailColor: "#fff",
-                              pathColor: "#F6CB51",
-                              textColor: "#F6CB51",
-                              textSize: 16,
-                            })}
-                          ></CircularProgressbarWithChildren>
-                        )}
-                      </ChangingProgressProvider>
+                      <CircularProgressbarWithChildren
+                        value={reportData["avgWriteScore"] * 10}
+                        className="font-bold"
+                        text={`${
+                          isNumeric(reportData["avgWriteScore"])
+                            ? reportData["avgWriteScore"] * 10 + "%"
+                            : "N/A"
+                        }`}
+                        circleRatio={0.75}
+                        styles={buildStyles({
+                          rotation: 1 / 2 + 1 / 8,
+                          trailColor: "#fff",
+                          pathColor: "#F6CB51",
+                          textColor: "#F6CB51",
+                          textSize: 16,
+                        })}
+                      ></CircularProgressbarWithChildren>
                     </div>
                     <div>
                       <p className="text-sm font-bold text-white text-center">
@@ -162,25 +161,23 @@ export default function Report() {
                   </div>
                   <div className="flex flex-col items-center mb-2">
                     <div style={{ width: 100, height: 100 }}>
-                      <ChangingProgressProvider
-                        values={[0, reportData["avgQuizScore"] * 100]}
-                      >
-                        {(value) => (
-                          <CircularProgressbarWithChildren
-                            value={value}
-                            className="font-bold"
-                            text={`${value > 0 ? value + "%" : "N/A"}`}
-                            circleRatio={0.75}
-                            styles={buildStyles({
-                              rotation: 1 / 2 + 1 / 8,
-                              trailColor: "#fff",
-                              pathColor: "#F6CB51",
-                              textColor: "#F6CB51",
-                              textSize: 16,
-                            })}
-                          ></CircularProgressbarWithChildren>
-                        )}
-                      </ChangingProgressProvider>
+                      <CircularProgressbarWithChildren
+                        value={reportData["avgQuizScore"]}
+                        className="font-bold"
+                        text={`${
+                          isNumeric(reportData["avgQuizScore"])
+                            ? reportData["avgQuizScore"].toFixed(2) + "%"
+                            : "N/A"
+                        }`}
+                        circleRatio={0.75}
+                        styles={buildStyles({
+                          rotation: 1 / 2 + 1 / 8,
+                          trailColor: "#fff",
+                          pathColor: "#F6CB51",
+                          textColor: "#F6CB51",
+                          textSize: 16,
+                        })}
+                      ></CircularProgressbarWithChildren>
                     </div>
                     <div className="">
                       <p className="text-sm font-bold text-white text-center">
@@ -190,7 +187,7 @@ export default function Report() {
                   </div>
                 </div>
 
-                <div className="flex flex-col grow p-8 bg-[#F6CC52] rounded-lg text-black">
+                <div className="flex flex-col w-2/3 p-8 bg-[#F6CC52] rounded-lg text-black">
                   <p className="text-xl font-bold ">Additional Reading</p>
 
                   <div className="space-y-2">

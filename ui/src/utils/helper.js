@@ -6,4 +6,8 @@ const shuffle = (array) => {
   return array;
 };
 
-export { shuffle };
+const isNumeric = (n) => {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+export { shuffle, isNumeric };

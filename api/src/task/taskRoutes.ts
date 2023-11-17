@@ -5,8 +5,6 @@ import TaskService from "./taskService";
 
 const router = express.Router();
 
-router.use(tokenChecker);
-
 router.post(
   "/trigger-daily-notifications",
   async (req: Request, res: Response, next: NextFunction) => {
