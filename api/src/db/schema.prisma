@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum QuizType {
+    DEFAULT
+    MATCH
+    WRITE
+}
+
+model User {
+    id                      String         @id @default(uuid())
+    firstName               String
+    lastName                String
+    email                   String         @unique
+    password                String?
+    avatar                  String?
+    regDate                 DateTime       @default(now())
+    refreshToken            String?
+    spacedRepetitionPattern Int[]
+    folders                 Folder[]
+    analogies               Analogy[]
+    otp                     Otp?
+    Topic                   Topic[]
+    Notification            Notification[]
+    Devices                 Devices[]
+}
+
+model Folder {
+    id      String   @id @default(uuid())
+    name    String   @unique
+    desc    String?
+    regDate DateTime @default(now())
+    userId  String
+    user    User     @relation(fields: [userId], references: [id])
+    topics  Topic[]
+}
+
+model Topic {
+    id         String     @id @default(uuid())
+    name       String     @unique
+    data       String
+    regDate    DateTime   @default(now())
+    archived   Boolean    @default(false)
+    folderId   String?
+    folder     Folder?    @relation(fields: [folderId], references: [id])
+    userId     String
+    user       User       @relation(fields: [userId], references: [id])
+    questions  Question?
+    flashcards Flashcard?
+    results    Result[]
+    Schedule   Schedule[]
+}
+
+model Question {
+    id      String   @id @default(uuid())
+    data    Json
+    regDate DateTime @default(now())
+    topicId String   @unique
+    topic   Topic    @relation(fields: [topicId], references: [id])
+}
+
+model Flashcard {
+    id      String   @id @default(uuid())
+    data    Json
+    regDate DateTime @default(now())
+    topicId String   @unique
+    topic   Topic    @relation(fields: [topicId], references: [id])
+}
+
+model Result {
+    id       String   @id @default(uuid())
+    quizType QuizType
+    data     String
+    score    Float?
+    regDate  DateTime @default(now())
+    topicId  String
+    topic    Topic    @relation(fields: [topicId], references: [id])
+}
+
+model Analogy {
+    id      String   @id @default(uuid())
+    regDate DateTime @default(now())
+    userId  String
+    user    User     @relation(fields: [userId], references: [id])
+    title   String?
+    chats   Chat[]
+}
+
+model Chat {
+    id        String   @id @default(uuid())
+    regDate   DateTime @default(now())
+    generated Boolean
+    message   String
+    analogyId String
+    analogy   Analogy  @relation(fields: [analogyId], references: [id])
+}
+
+model Otp {
+    id      String   @id @default(uuid())
+    regDate DateTime @default(now())
+    otp     String
+    userId  String   @unique
+    user    User     @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+    id      String   @id @default(uuid())
+    regDate DateTime @default(now())
+    isRead  Boolean  @default(false)
+    text    String
+    userId  String
+    user    User     @relation(fields: [userId], references: [id])
+}
+
+model Devices {
+    id                String   @id @default(uuid())
+    notificationToken String?
+    regDate           DateTime @default(now())
+    userId            String
+    user              User     @relation(fields: [userId], references: [id])
+}
+
+model Schedule {
+    id                     String    @id @default(uuid())
+    completed              Boolean   @default(false)
+    actualCompletionDate   DateTime?
+    expectedCompletionDate DateTime
+    notified               Boolean   @default(false)
+    topicId                String
+    topic                  Topic     @relation(fields: [topicId], references: [id])
+}
